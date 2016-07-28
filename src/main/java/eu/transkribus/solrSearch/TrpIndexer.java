@@ -6,21 +6,19 @@
 package eu.transkribus.solrSearch;
 
 import java.io.IOException;
-
 import java.util.ArrayList;
 import java.util.List;
-import java.util.regex.Pattern;
 
 import javax.xml.bind.JAXBException;
 
-import org.apache.log4j.Logger;
-
 import org.apache.solr.client.solrj.SolrClient;
 import org.apache.solr.client.solrj.SolrQuery;
-import org.apache.solr.common.SolrInputDocument;
 import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.impl.HttpSolrClient;
 import org.apache.solr.client.solrj.response.QueryResponse;
+import org.apache.solr.common.SolrInputDocument;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import eu.transkribus.core.model.beans.TrpCollection;
 import eu.transkribus.core.model.beans.TrpDoc;
@@ -37,11 +35,10 @@ import eu.transkribus.solrSearch.util.Schema.SearchField;
 
 
 public class TrpIndexer {
-	
 	//solr url can also be taken from solr.properties - see constructor
 	private final String serverUrl; 
 	private static SolrClient server;
-	protected static final Logger LOGGER = Logger.getLogger(TrpIndexer.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(TrpIndexer.class);
 	
 	//Constructor
 	public TrpIndexer(final String serverUrl){
@@ -56,6 +53,11 @@ public class TrpIndexer {
 	
 	//Index document by indexing metadata and all pages
 	public void indexDoc(TrpDoc doc){
+		indexDoc(doc, true);
+	}	
+	
+	//Index document by indexing metadata and all pages
+	public void indexDoc(TrpDoc doc, boolean doOptimize){
 		//Check if document is already indexed
 		if(isIndexed(doc)){
 			removeIndex(doc);
@@ -74,13 +76,20 @@ public class TrpIndexer {
 			}
 
 		}
+		if(doOptimize){ 
+			optimizeIndex();
+		}
+	}	
+	
+	public void optimizeIndex(){
+		LOGGER.debug("Optimizing index...");
 		try {
 			server.optimize();
 		} catch (SolrServerException | IOException e) {
-			LOGGER.error(e);
+			LOGGER.error(e.getMessage(), e);
 			e.printStackTrace();
 		}
-	}	
+	}
 	
 	//Check if document is indexed
 	private boolean isIndexed(TrpDoc doc){
