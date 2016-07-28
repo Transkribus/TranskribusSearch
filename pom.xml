@@ -1,0 +1,48 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>eu.transkribus</groupId>
+  <artifactId>TranskribuSsearch</artifactId>
+  <version>0.0.1</version>
+  <organization>
+		<!-- <name>Sun Microsystems, Inc.</name> -->
+		<name>UIBK</name>
+	</organization>
+	<!-- hack END -->
+	<repositories>
+		<!-- DEA Gulliver artifactory: -->
+		<repository>
+			<id>dea-gulliver</id>
+			<name>dea-gulliver-releases</name>
+			<url>http://dea-gulliver.uibk.ac.at:8888/artifactory/libs-release-local</url>
+		</repository>
+	</repositories>
+	<dependencies>
+		<dependency>
+			<groupId>eu.transkribus</groupId>
+			<artifactId>TranskribusCore</artifactId>
+			<version>0.0.2</version>
+		</dependency>
+		<dependency>
+			<groupId>eu.transkribus</groupId>
+			<artifactId>TranskribusPersistence</artifactId>
+			<version>1.0</version>
+		</dependency>
+		<dependency>
+		  <groupId>org.apache.solr</groupId>
+		  <artifactId>solr-solrj</artifactId>
+		  <version>6.1.0</version>
+		</dependency>
+	</dependencies>
+	<build>
+		<plugins>
+			<plugin>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>3.1</version>
+				<configuration>
+					<source>1.7</source>
+					<target>1.7</target>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+</project>
