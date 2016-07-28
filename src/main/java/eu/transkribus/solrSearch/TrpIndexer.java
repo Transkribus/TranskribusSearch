@@ -9,6 +9,7 @@ import java.io.IOException;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Pattern;
 
 import javax.xml.bind.JAXBException;
 
@@ -425,7 +426,7 @@ public class TrpIndexer {
 		}
 		String baseLine = line.getBaseline().getPoints();
 		String string = line.getUnicodeText();	
-		string = string.replaceAll("\\[", ".").replaceAll("\\]",".").replaceAll("\\p{P}", ".").replaceAll("¬", ".");
+		string = string.replaceAll("\\[", ".").replaceAll("\\]",".").replaceAll("\\p{Punct}", ".").replaceAll("¬", ".");
 		String[] basePts = baseLine.split(" ");
 
 		
@@ -459,7 +460,7 @@ public class TrpIndexer {
 								+ " " + wordCoordX2 + "," + wordCoordY2
 								+ " " + wordCoordX1 + "," + wordCoordY2;								
 								
-			String outputWord = s.replaceAll("\\p{P}", "").toLowerCase().trim(); //Remove punctuation / set lowercase / trim
+			String outputWord = s.replaceAll("\\p{Punct}", "").toLowerCase().trim(); //Remove punctuation / set lowercase / trim
 			
 			TrpWordType trpWord = new TrpWordType();
 			if(trpWord != null && outputWord != ""){			

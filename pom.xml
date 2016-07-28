@@ -22,11 +22,11 @@
 			<artifactId>TranskribusCore</artifactId>
 			<version>0.0.2</version>
 		</dependency>
-		<dependency>
-			<groupId>eu.transkribus</groupId>
-			<artifactId>TranskribusPersistence</artifactId>
-			<version>1.0</version>
-		</dependency>
+<!-- 		<dependency> -->
+<!-- 			<groupId>eu.transkribus</groupId> -->
+<!-- 			<artifactId>TranskribusPersistence</artifactId> -->
+<!-- 			<version>1.0</version> -->
+<!-- 		</dependency> -->
 		<dependency>
 		  <groupId>org.apache.solr</groupId>
 		  <artifactId>solr-solrj</artifactId>
