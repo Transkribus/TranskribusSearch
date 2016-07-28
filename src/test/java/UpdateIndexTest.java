@@ -13,7 +13,6 @@ import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.impl.HttpSolrClient;
 import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.common.params.ModifiableSolrParams;
-import org.dea.transcript.trp.solrSearch.TrpIndexer;
 
 import de.planet.tech.roi_core.util.LineType;
 import eu.transkribus.core.model.beans.TrpCollection;
@@ -28,6 +27,7 @@ import eu.transkribus.core.model.beans.pagecontent_trp.TrpWordType;
 import eu.transkribus.core.util.PageXmlUtils;
 import eu.transkribus.persistence.logic.CollectionManager;
 import eu.transkribus.persistence.logic.DocManager;
+import eu.transkribus.solrSearch.TrpIndexer;
 
 
 public class UpdateIndexTest {

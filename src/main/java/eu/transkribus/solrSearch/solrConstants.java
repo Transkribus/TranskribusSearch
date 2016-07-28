@@ -1,4 +1,4 @@
-package org.dea.transcript.trp.solrSearch;
+package eu.transkribus.solrSearch;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;

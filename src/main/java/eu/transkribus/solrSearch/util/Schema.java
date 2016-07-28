@@ -1,4 +1,4 @@
-package org.dea.transcript.trp.solrSearch.util;
+package eu.transkribus.solrSearch.util;
 
 
 import java.util.HashMap;

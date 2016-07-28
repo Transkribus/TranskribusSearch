@@ -1,4 +1,4 @@
-package org.dea.transcript.trp.solrSearch;
+package eu.transkribus.solrSearch;
 
 public class searchResult {
 	

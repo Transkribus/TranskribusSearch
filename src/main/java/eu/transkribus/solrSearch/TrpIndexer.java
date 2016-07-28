@@ -3,7 +3,7 @@
  * 
  */
 
-package org.dea.transcript.trp.solrSearch;
+package eu.transkribus.solrSearch;
 
 import java.io.IOException;
 
@@ -11,8 +11,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.xml.bind.JAXBException;
-
-import org.dea.transcript.trp.solrSearch.util.Schema.SearchField;
 
 import org.apache.log4j.Logger;
 
@@ -34,6 +32,7 @@ import eu.transkribus.core.model.beans.pagecontent.WordType;
 import eu.transkribus.core.model.beans.pagecontent_trp.TrpTextLineType;
 import eu.transkribus.core.model.beans.pagecontent_trp.TrpWordType;
 import eu.transkribus.core.util.PageXmlUtils;
+import eu.transkribus.solrSearch.util.Schema.SearchField;
 
 
 public class TrpIndexer {
@@ -423,7 +422,7 @@ public class TrpIndexer {
 		}
 		String baseLine = line.getBaseline().getPoints();
 		String string = line.getUnicodeText();	
-		string = string.replaceAll("\\[", ".").replaceAll("\\]",".").replaceAll("\\p{P}", ".").replaceAll("¬", ".");
+		string = string.replaceAll("\\[", ".").replaceAll("\\]",".").replaceAll("\\p{P}", ".").replaceAll("ï¿½", ".");
 		String[] basePts = baseLine.split(" ");
 
 		
