@@ -425,7 +425,7 @@ public class TrpIndexer {
 		}
 		String baseLine = line.getBaseline().getPoints();
 		String string = line.getUnicodeText();	
-		string = string.replaceAll("\\[", ".").replaceAll("\\]",".").replaceAll("\\p{P}", ".").replaceAll("�", ".");
+		string = string.replaceAll("\\[", ".").replaceAll("\\]",".").replaceAll("\\p{P}", ".").replaceAll("¬", ".");
 		String[] basePts = baseLine.split(" ");
 
 		
