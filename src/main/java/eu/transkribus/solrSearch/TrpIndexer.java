@@ -66,7 +66,7 @@ public class TrpIndexer {
 			try {
 				server.commit();
 				//server.optimize();
-				LOGGER.info("Commited doc MD to solr server.");
+				LOGGER.info("Commited page " + p.getPageNr() + " | doc = " + p.getDocId());
 			} catch (SolrServerException | IOException e) {
 				LOGGER.error("Could not commit doc MD to solr server.");
 				e.printStackTrace();
