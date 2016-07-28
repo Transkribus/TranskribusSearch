@@ -38,13 +38,16 @@ import eu.transkribus.solrSearch.util.Schema.SearchField;
 public class TrpIndexer {
 	
 	//solr url can also be taken from solr.properties - see constructor
-	private static String serverUrl ="http://localhost:8983/solr/trp"; 
+	private final String serverUrl; 
 	private static SolrClient server;
 	protected static final Logger LOGGER = Logger.getLogger(TrpIndexer.class);
 	
 	//Constructor
-	public TrpIndexer(){
+	public TrpIndexer(final String serverUrl){
+		if(serverUrl == null || serverUrl.isEmpty())
+			throw new IllegalArgumentException("ServerUrl must not be empty!");
 		//serverUrl = solrConstants.getString("solrUrl"); //Get server url from properties file
+		this.serverUrl = serverUrl;
 		server = this.getSolrClient();
 		LOGGER.info("Instance of Indexer was created.");
 		
