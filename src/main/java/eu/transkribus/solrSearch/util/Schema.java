@@ -38,8 +38,8 @@ public class Schema {
 	public static final String CREATED_FROM_FIELD_NAME = "createdFrom";
 	public static final String CREATED_TO_FIELD_NAME = "createdTo";
 	public static final String PAGE_NR_FIELD_NAME = "pageNr";
-	public static final String FULLTEXT_FIELD_NAME = "fulltext";
-	public static final String FULLTEXT_RAW_FIELD_NAME = "fulltext_raw";
+	public static final String FULLTEXT_FIELD_NAME = "fullText";
+	public static final String FULLTEXT_RAW_FIELD_NAME = "fullText_raw";
 	public static final String WORDTEXT = "wordText";
 	public static final String TEXTCOORDS = "textCoords";
 	public static final String TEXTREGION = "textRegion";
