@@ -28,11 +28,13 @@ import eu.transkribus.core.model.beans.pagecontent.PcGtsType;
 import eu.transkribus.core.model.beans.pagecontent.TextLineType;
 import eu.transkribus.core.model.beans.pagecontent.TextRegionType;
 import eu.transkribus.core.model.beans.pagecontent.WordType;
+import eu.transkribus.core.model.beans.pagecontent_trp.TrpPageType;
 import eu.transkribus.core.model.beans.pagecontent_trp.TrpTextLineType;
+import eu.transkribus.core.model.beans.pagecontent_trp.TrpTextRegionType;
 import eu.transkribus.core.model.beans.pagecontent_trp.TrpWordType;
 import eu.transkribus.core.util.PageXmlUtils;
-import eu.transkribus.solrSearch.util.Schema.SearchField;
 import eu.transkribus.solrSearch.util.IndexTextUtils;
+import eu.transkribus.solrSearch.util.Schema.SearchField;
 
 
 public class TrpIndexer {
@@ -40,7 +42,7 @@ public class TrpIndexer {
 	private final String serverUrl; 
 	private static SolrClient server;
 	private static final Logger LOGGER = LoggerFactory.getLogger(TrpIndexer.class);
-	private static final String EMPTY_FIELD = "!EMPTY_FIELD!";
+	private static final String EMPTY_FIELD = "_EMPTY_FIELD";
 	
 	//Constructor
 	public TrpIndexer(final String serverUrl){
@@ -65,9 +67,9 @@ public class TrpIndexer {
 			removeIndex(doc);
 		}
 		
-		indexDocMd(doc.getMd());
+		//indexDocMd(doc.getMd());
 		for(TrpPage p: doc.getPages()){
-			indexPage(p);
+			indexPage(p, doc.getMd());
 			try {
 				server.commit();
 				//server.optimize();
@@ -133,6 +135,7 @@ public class TrpIndexer {
 		}
 	}
 	
+	/*
 	//Index TrpDoc metadata
 	private boolean indexDocMd(TrpDocMetadata md){
 		boolean success = false;
@@ -142,13 +145,14 @@ public class TrpIndexer {
 		}		
 		return success;
 	}
+	*/
 
-	//Index TrpPage metadata
-	private boolean indexPage(TrpPage p){
+	//Index TrpPage and doc metadata
+	private boolean indexPage(TrpPage p, TrpDocMetadata md){
 		boolean success = false;
 
 		try {
-			SolrInputDocument doc = createIndexDocument(p);
+			SolrInputDocument doc = createIndexDocument(p, md);
 			if(doc != null){
 				success = submitDocToSolr(doc);
 				//indexText(p);
@@ -159,6 +163,7 @@ public class TrpIndexer {
 		return success;
 	}
 	
+	/*
 	//Index TrpPage text
 	private boolean indexText(TrpPage p){
 		boolean success = true;
@@ -199,19 +204,21 @@ public class TrpIndexer {
 			submitDocsToSolr(words);
 		return success;
 	}
+	*/
 	
 	
 	//Update single page index
-	public boolean updatePageIndex(TrpPage p){
+	public boolean updatePageIndex(TrpPage p, TrpDoc trpDoc){
 		boolean success = false;
 		if(isIndexed(p)){
 			removeIndex(p);
-		}
+		}		
+		
 		try {
-			SolrInputDocument doc = createIndexDocument(p);
+			SolrInputDocument doc = createIndexDocument(p, trpDoc.getMd());
 			if(doc != null){
 				success = submitDocToSolr(doc);
-				indexText(p);
+				//indexText(p);
 			}
 		} catch (JAXBException e) {
 			success = false;
@@ -302,7 +309,7 @@ public class TrpIndexer {
 		return success;
 }
 	
-	/*Create SolrInputDocument from Trp metadata
+	/*Create SolrInputDocument from Trp metadata - obsolete
 	 * with fields:
 	 * Id
 	 * Title
@@ -312,8 +319,7 @@ public class TrpIndexer {
 	 * Uploader
 	 * Nr. of pages
 	 * Description
-	 */
-	private SolrInputDocument createIndexDocument(TrpDocMetadata md){
+vate SolrInputDocument createIndexDocument(TrpDocMetadata md){
 		
 		SolrInputDocument doc = new SolrInputDocument();
 		if (md != null) {
@@ -343,22 +349,24 @@ public class TrpIndexer {
 			for(TrpCollection c : colls){
 				colIds.add(c.getColId());
 			}
-			doc.addField(SearchField.ColId.getFieldName(), colIds);		
+			doc.addField(SearchField.ColId.getFieldName(), colIds);	
+	
 			
 		}			
 		return doc;
 	}
+	*/
 
 	
-	/*Create SolrInputDocument from Trp page
+	/*Create SolrInputDocument from Trp page - obsolete
 	 * 
-	 */
+	 
 	private SolrInputDocument createIndexDocument(TrpPage p) throws JAXBException{
 		SolrInputDocument doc = new SolrInputDocument();
 		if(p != null){
 			
 			doc.addField(SearchField.Id.getFieldName(), p.getDocId() + "_" + p.getPageNr());
-			doc.addField(SearchField.Type.getFieldName(), "p");			
+			//doc.addField(SearchField.Type.getFieldName(), "p");			
 			doc.addField(SearchField.PageNr.getFieldName(), p.getPageNr());
 			if(p.getCurrentTranscript().getUserName() != null)
 				doc.addField(SearchField.Uploader.getFieldName(), p.getCurrentTranscript().getUserName());
@@ -382,8 +390,151 @@ public class TrpIndexer {
 		
 		return doc;
 	}
+	*/
 	
 	
+	private SolrInputDocument createIndexDocument(TrpPage p, TrpDocMetadata md) throws JAXBException{
+		SolrInputDocument doc = new SolrInputDocument();
+		if(p != null){
+			
+			doc.addField(SearchField.Id.getFieldName(), p.getDocId() + "_" + p.getPageNr());
+			doc.addField(SearchField.DocId.getFieldName(), p.getDocId());
+			doc.addField(SearchField.Title.getFieldName(), md.getTitle());
+			doc.addField(SearchField.Author.getFieldName(), md.getAuthor());
+			doc.addField(SearchField.Genre.getFieldName(), md.getGenre());
+			//doc.addField(SearchField.Type.getFieldName(), "p");			
+			doc.addField(SearchField.PageNr.getFieldName(), p.getPageNr());
+			doc.addField(SearchField.NrOfPages.getFieldName(), md.getNrOfPages());
+			if(p.getCurrentTranscript().getUserName() != null)
+				doc.addField(SearchField.Uploader.getFieldName(), p.getCurrentTranscript().getUserName());
+			doc.addField(SearchField.UploadTime.getFieldName(), p.getCurrentTranscript().getTime());
+			doc.addField(SearchField.PageUrl.getFieldName(), p.getUrl().toString());
+			
+			
+			PcGtsType pc = new PcGtsType();
+			try {
+				pc = PageXmlUtils.unmarshal(p.getCurrentTranscript().getUrl());
+			} catch (JAXBException e) {
+				LOGGER.error("XML Unmarshal failed for Doc "+p.getDocId() +" page "+p.getPageNr());
+				e.printStackTrace();
+			}
+			
+			String fullTextFromWords ="";
+			TrpPageType pt = (TrpPageType)pc.getPage();
+			for(TrpTextRegionType ttr : pt.getTextRegions(false)){
+				fullTextFromWords += ttr.getTextFromWords(true).replaceAll("\n", " ").replaceAll("\\p{Punct}", "");
+			}
+			
+			doc.addField(SearchField.Fulltextfromlines.getFieldName(), PageXmlUtils.getFulltextFromLines(pc));
+			
+			doc.addField(SearchField.Fulltextfromwords.getFieldName(), fullTextFromWords);
+			
+			
+
+
+			//Indexing raw text field no longer supported in schema
+			//doc.addField(SearchField.FulltextRaw.getFieldName(), JaxbUtils.marshalToString(pc));
+			
+			ArrayList<TrpWordType> words = getWordList(pc);
+			for(TrpWordType word : words){
+				String wordAndCoords = word.getUnicodeText().replaceAll("\\p{Punct}", "")
+										+ ":"+word.getLine().getRegion().getId()+"/"
+										+ word.getLine().getId()+"/"
+										+ (word.getId().isEmpty() ? "_empty_" : word.getId())
+										+ ":"+word.getCoordinates();
+
+				doc.addField(SearchField.WordCoords.getFieldName(), wordAndCoords);
+			}
+			
+			
+			
+			List<TrpCollection> colls = md.getColList();
+			ArrayList<Integer> colIds = new ArrayList<Integer>();
+			for(TrpCollection c : colls){
+				colIds.add(c.getColId());
+			}
+			doc.addField(SearchField.ColId.getFieldName(), colIds);	
+			
+			
+			
+			//doc.addField("_root_", p.getDocId() + "_md");
+
+		}
+		
+		return doc;
+	}
+	
+	
+	
+
+	private ArrayList<TrpWordType> getWordList(PcGtsType pc){
+		
+		ArrayList<TrpWordType> words = new ArrayList<TrpWordType>();
+		
+		
+		for( TextRegionType tr : PageXmlUtils.getTextRegions(pc)){			//Check all textregions of page
+			for(TextLineType tl : tr.getTextLine()){						//Check all textlines of textregion
+					TrpTextLineType ttl = (TrpTextLineType) tl;
+					if(!ttl.getUnicodeText().isEmpty()){					//Check if textline is empty
+						
+						
+						ArrayList<TrpWordType> trpWordsInLine = new ArrayList<TrpWordType>();	
+						ArrayList<TrpWordType> wordsGeneratedFromLine = IndexTextUtils.getWordsFromLine(ttl);
+						
+						if(ttl.getWordCount() > 0){							//If textline contains TrpWords index them
+							
+							for(WordType tw: tl.getWord()){		
+	
+								TrpWordType trptw = (TrpWordType) tw;
+								
+								String[] singleCoords = trptw.getCoordinates().split(" ");
+								if(singleCoords.length > 4){								//If > 4 coordinates reduce to 4 at outlines
+									String newWordCoords = IndexTextUtils.reduceCoordinates(singleCoords);
+									trptw.setCoordinates(newWordCoords, trptw);
+								}
+								
+								trpWordsInLine.add(trptw);
+							}
+						}else{												//If textline contains no words create them
+							for(TrpWordType trptw: wordsGeneratedFromLine){
+								if(trptw != null){
+									trpWordsInLine.add(trptw);
+								}
+							}
+						}					
+						
+						if(ttl.getWordCount() > 0){	
+							boolean contained = false;
+							for(TrpWordType generatedWord : wordsGeneratedFromLine){
+								contained = false;
+								
+								for(TrpWordType wordInLine : trpWordsInLine){
+									if(wordInLine.getUnicodeText().equals(generatedWord.getUnicodeText())){
+										contained = true;
+									}
+								}
+								if(!contained){
+									trpWordsInLine.add(generatedWord); //If word from generated line is not found in word list, add it
+								}
+				
+							}
+						}
+						
+						words.addAll(trpWordsInLine);
+					}
+
+			}
+
+		}
+		
+		
+		
+		
+		
+		return words;
+	}
+	
+	/*
 	//Create Solr document from Words
 	private SolrInputDocument createIndexDocument(TrpWordType word, int pageNr, int docId){
 		SolrInputDocument doc = new SolrInputDocument();
@@ -406,5 +557,6 @@ public class TrpIndexer {
 		return doc;
 		
 	}
+	*/
 	
 }

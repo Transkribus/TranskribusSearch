@@ -38,10 +38,12 @@ public class Schema {
 	public static final String CREATED_FROM_FIELD_NAME = "createdFrom";
 	public static final String CREATED_TO_FIELD_NAME = "createdTo";
 	public static final String PAGE_NR_FIELD_NAME = "pageNr";
-	public static final String FULLTEXT_FIELD_NAME = "fullText";
+	public static final String FULLTEXTFROMLINES_FIELD_NAME = "fullTextFromLines";
+	public static final String FULLTEXTFROMWORDS_FIELD_NAME = "fullTextFromWords";
 	public static final String FULLTEXT_RAW_FIELD_NAME = "fullText_raw";
 	public static final String WORDTEXT = "wordText";
 	public static final String TEXTCOORDS = "textCoords";
+	public static final String WORDCOORDS ="wordCoords";
 	public static final String TEXTREGION = "textRegion";
 	public static final String TEXTLINE = "textLine";
 	public static final String PAGEURL = "pageUrl";
@@ -75,10 +77,12 @@ public class Schema {
 		CreatedFrom(CREATED_FROM_FIELD_NAME, "Created from", FieldType.TDATE),
 		CreatedTo(CREATED_TO_FIELD_NAME, "Created to", FieldType.TDATE),
 		PageNr(PAGE_NR_FIELD_NAME, "Page", FieldType.INT),
-		Fulltext(FULLTEXT_FIELD_NAME, "Fulltext", FieldType.TEXT),
+		Fulltextfromlines(FULLTEXTFROMLINES_FIELD_NAME, "Fulltext from lines", FieldType.TEXT),
+		Fulltextfromwords(FULLTEXTFROMWORDS_FIELD_NAME, "Fulltext from words", FieldType.TEXT),
 		FulltextRaw(FULLTEXT_RAW_FIELD_NAME, "Fulltext Raw", FieldType.STRING),
 		Wordtext(WORDTEXT, "WordText", FieldType.STRING),
 		TextCoords(TEXTCOORDS, "TextCoords", FieldType.STRING),
+		WordCoords(WORDCOORDS, "WordCoords", FieldType.STRING),
 		TextRegion(TEXTREGION,"TextRegion", FieldType.STRING),
 		TextLine(TEXTLINE, "TextLine", FieldType.STRING),
 		PageUrl(PAGEURL, "PageUrl", FieldType.STRING),

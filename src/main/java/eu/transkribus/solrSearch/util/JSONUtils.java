@@ -1,7 +1,9 @@
 package eu.transkribus.solrSearch.util;
 
+import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -22,7 +24,7 @@ import eu.transkribus.core.util.PageXmlUtils;
 
 public class JSONUtils {
 	
-	
+	private final static String JSONPATH = "C:\\Users\\c608393\\TrpDocs\\jsontest\\";
 	public static void createFilesFromDoc(TrpDoc doc){
 		
 		List<TrpPage> pages = doc.getPages(); 
@@ -57,37 +59,43 @@ public class JSONUtils {
 
 			}	
 			
-			
+			writeJSON(words, p);
 
-			JSONObject obj = new JSONObject();
-			obj.put("Name", p.getDocId()+"_"+p.getPageNr()+"_PixelCoords");
-			
-			JSONArray jWords = new JSONArray();
-			
-			
-			
-			System.out.println(p.getDocId()+ " "+p.getPageNr() +"Nr. of words: " +words.size());
-			List<String> sWords = new ArrayList<String>();
-			int i = 0;
-			for(TrpWordType tw : words){
-					String sWord = tw.getUnicodeText().replaceAll("¬", ".").replaceAll("\\p{Punct}", "");
-					if(!sWord.isEmpty())
-						jWords.add(sWord +":"+tw.getCoordinates());
-				}
-				
-				obj.put("Words", jWords);
-				
-				try (FileWriter file = new FileWriter("C:\\Users\\c608393\\TrpDocs\\jsontest\\"+p.getDocId()+"_"+p.getPageNr())) {
-	
-					file.write(obj.toJSONString());
-	
-					System.out.println("Successfully Copied JSON Object to File...");
-					System.out.println("\nJSON Object: " + obj);
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
 		
 			}
 		}
+	
+	public static void writeJSON(List<TrpWordType> words, TrpPage p){
+
+		JSONObject obj = new JSONObject();
+		obj.put("Name", p.getDocId()+"_"+p.getPageNr()+"_PixelCoords");
+		
+		JSONArray jWords = new JSONArray();
+		
+		
+		
+		System.out.println(p.getDocId()+ " "+p.getPageNr() +"Nr. of words: " +words.size());
+		List<String> sWords = new ArrayList<String>();
+		int i = 0;
+		for(TrpWordType tw : words){
+				String sWord = tw.getUnicodeText().replaceAll("¬", ".").replaceAll("\\p{Punct}", "");
+				if(!sWord.isEmpty())
+					jWords.add(sWord +":"+tw.getCoordinates());
+			}
+			
+			obj.put("Words", jWords);
+			
+			
+			try (FileWriter file = new FileWriter(JSONPATH+p.getDocId()+"\\"+p.getDocId()+"_"+p.getPageNr()+".json")) {
+				
+				file.write(obj.toJSONString());
+				
+				file.close();
+				System.out.println("Successfully Copied JSON Object to File...");
+				System.out.println("\nJSON Object: " + obj);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+	}
+	
 }
