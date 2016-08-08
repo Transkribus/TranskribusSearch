@@ -53,7 +53,11 @@ public class TrpIndexer {
 		server = this.getSolrClient();
 		LOGGER.info("Instance of Indexer was created.");
 		
-	};	
+	}
+	
+	public void close() throws IOException {
+		server.close();
+	}
 	
 	//Index document by indexing metadata and all pages
 	public void indexDoc(TrpDoc doc){
@@ -282,7 +286,7 @@ public class TrpIndexer {
 	//Set connection to solr
 	private SolrClient getSolrClient(){
 		
-		//SolrClient solr = new ConcurrentUpdateSolrClient(serverUrl, 20, 3);	
+//		SolrClient solr = new ConcurrentUpdateSolrClient(serverUrl, 20, 3);	
 		SolrClient solr = new HttpSolrClient.Builder(serverUrl).build();
 		return solr;
 	}
