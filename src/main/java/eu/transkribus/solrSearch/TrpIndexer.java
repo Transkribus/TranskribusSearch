@@ -206,16 +206,20 @@ public class TrpIndexer {
 	}
 	*/
 	
+	@Deprecated
+	public boolean updatePageIndex(TrpPage p, TrpDoc trpDoc){
+		return this.updatePageIndex(p, trpDoc.getMd());
+	}
 	
 	//Update single page index
-	public boolean updatePageIndex(TrpPage p, TrpDoc trpDoc){
+	public boolean updatePageIndex(TrpPage p, TrpDocMetadata trpDocMd){
 		boolean success = false;
 		if(isIndexed(p)){
 			removeIndex(p);
 		}		
 		
 		try {
-			SolrInputDocument doc = createIndexDocument(p, trpDoc.getMd());
+			SolrInputDocument doc = createIndexDocument(p, trpDocMd);
 			if(doc != null){
 				success = submitDocToSolr(doc);
 				//indexText(p);
