@@ -258,16 +258,22 @@ public class TrpIndexer {
 	
 	//Delete single page and all children from index
 	public void removeIndex(TrpPage page){
-		String queryString = "id:"+page.getDocId()+"_"+page.getPageNr()+"*";
+		removeIndex(page.getDocId(), page.getPageNr());
+	}
+	
+	//Delete single page and all children from index
+	public void removeIndex(int docId, int pageNr){
+		String queryString = "id:"+docId+"_"+pageNr+"*";
 		try {
 			server.deleteByQuery(queryString);
 			server.commit();
 			server.optimize();
 		} catch (SolrServerException | IOException e) {
-			LOGGER.error("Could not remove page "+page.getDocId()+" from index.");
+			LOGGER.error("Could not remove page "+docId+" from index.");
 			e.printStackTrace();
 		}
 	}
+		
 	
 	//Delete entire index
 	public void resetIndex(){
