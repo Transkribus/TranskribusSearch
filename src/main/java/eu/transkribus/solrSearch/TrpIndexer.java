@@ -245,13 +245,18 @@ public class TrpIndexer {
 	
 	//Delete document and all children from index
 	public void removeIndex(TrpDoc doc){
-		String queryString = "id:"+doc.getId()+"*";
+		removeIndex(doc.getId());
+	}
+	
+	//Delete document and all children from index
+	public void removeIndex(int docId){
+		String queryString = "id:"+docId+"*";
 		try {
 			server.deleteByQuery(queryString);
 			server.commit();
 			server.optimize();
 		} catch (SolrServerException | IOException e) {
-			LOGGER.error("Could not remove document "+doc.getId()+" from index.");
+			LOGGER.error("Could not remove document "+docId+" from index.");
 			e.printStackTrace();
 		}
 	}
