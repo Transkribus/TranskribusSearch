@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.solr.client.solrj.response.FacetField.Count;
 import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.common.SolrDocument;
 
@@ -15,6 +16,7 @@ public class SearchResult {
 	private Map<String,String> parentDocs = new HashMap<String,String>();
 	private Map<String,String> pageUrls = new HashMap<String,String>();
 	private Map<String,ArrayList<Object>> wordCoords = new HashMap<String,ArrayList<Object>>();
+	private Map<String,Long> collFacets = new HashMap<String,Long>();
 	
 	public SearchResult(){
 		
@@ -45,6 +47,10 @@ public class SearchResult {
 			if(result.getFieldValue("wordCoords") != null){
 				wordCoords.put(result.getFieldValue("id").toString(), (ArrayList<Object>) result.getFieldValues("wordCoords"));
 			}
+		}
+		
+		for (Count count : response.getFacetField("collectionId").getValues()){
+			collFacets.put(count.getName(), count.getCount());
 		}
 		
 	}
@@ -94,6 +100,10 @@ public class SearchResult {
 	
 	public Map<String,ArrayList<Object>> getWordCoords(){
 		return wordCoords;
+	}
+	
+	public Map<String,Long> getCollFacets(){
+		return collFacets;
 	}
 	
 	

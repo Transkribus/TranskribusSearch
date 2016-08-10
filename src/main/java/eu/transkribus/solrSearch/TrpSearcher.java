@@ -95,6 +95,10 @@ public class TrpSearcher {
 			query.set("hl.snippets", "20");
 		}
 		
+		query.setFacet(true);
+		query.addFacetField("author");
+		query.addFacetField("collectionId");
+		
 		System.out.println(queryString);		
 		
 		LOGGER.info("q: "+queryString+ ", fq: "+collectionString);		
