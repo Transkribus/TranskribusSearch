@@ -486,7 +486,7 @@ vate SolrInputDocument createIndexDocument(TrpDocMetadata md){
 	
 	
 
-	private ArrayList<TrpWordType> getWordList(PcGtsType pc){
+	public ArrayList<TrpWordType> getWordList(PcGtsType pc){
 		
 		ArrayList<TrpWordType> words = new ArrayList<TrpWordType>();
 		
@@ -494,7 +494,7 @@ vate SolrInputDocument createIndexDocument(TrpDocMetadata md){
 		for( TextRegionType tr : PageXmlUtils.getTextRegions(pc)){			//Check all textregions of page
 			for(TextLineType tl : tr.getTextLine()){						//Check all textlines of textregion
 					TrpTextLineType ttl = (TrpTextLineType) tl;
-					if(!ttl.getUnicodeText().isEmpty()){					//Check if textline is empty
+					if(!(ttl.getUnicodeText().isEmpty()  && ttl.getTextFromWords(true).isEmpty()) ){					//Check if textline is empty
 						
 						
 						ArrayList<TrpWordType> trpWordsInLine = new ArrayList<TrpWordType>();	
