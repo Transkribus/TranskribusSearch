@@ -99,7 +99,7 @@ public class TrpSearcher {
 		query.addFacetField("author");
 		query.addFacetField("collectionId");
 		
-		System.out.println(queryString);		
+		//System.out.println(queryString);		
 		
 		LOGGER.info("q: "+queryString+ ", fq: "+collectionString);		
 		

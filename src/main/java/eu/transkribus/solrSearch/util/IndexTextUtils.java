@@ -8,6 +8,7 @@ import java.util.Map;
 import javax.xml.bind.JAXBException;
 
 import eu.transkribus.core.model.beans.TrpPage;
+import eu.transkribus.core.model.beans.pagecontent.BaselineType;
 import eu.transkribus.core.model.beans.pagecontent.PcGtsType;
 import eu.transkribus.core.model.beans.pagecontent.TextLineType;
 import eu.transkribus.core.model.beans.pagecontent.TextRegionType;
@@ -23,9 +24,15 @@ public class IndexTextUtils {
 	public static ArrayList<TrpWordType> getWordsFromLine(TrpTextLineType line){
 		
 		ArrayList<TrpWordType> trpWords = new ArrayList<TrpWordType>();
-		if (line == null || (line.getBaseline() == null)){
+		if (line == null){
 			return trpWords;
 		}
+		
+		if(line.getBaseline() == null){
+			line.setBaseline(generateBaseline(line));
+		}
+				
+		
 		String baseLine = line.getBaseline().getPoints();
 		String string = line.getUnicodeText();	
 		string = string.replaceAll("\\[", ".").replaceAll("\\]",".").replaceAll("\\p{Punct}", ".").replaceAll("¬", ".");
@@ -62,7 +69,7 @@ public class IndexTextUtils {
 								+ " " + wordCoordX2 + "," + wordCoordY2
 								+ " " + wordCoordX1 + "," + wordCoordY2;								
 								
-			String outputWord = s.replaceAll("\\p{Punct}", "").trim(); //Remove punctuation / set lowercase / trim
+			String outputWord = s.replaceAll("[^\\p{Alpha}\\p{Digit}]+", "").trim(); //Remove punctuation / set lowercase / trim
 			
 			TrpWordType trpWord = new TrpWordType();
 			if(trpWord != null && outputWord != ""){			
@@ -84,6 +91,46 @@ public class IndexTextUtils {
 	}
 	
 	
+	private static BaselineType generateBaseline(TrpTextLineType line) {
+		
+		BaselineType baseLine = new BaselineType();
+		ArrayList<Integer> xPts = new ArrayList<Integer>();
+		ArrayList<Integer> yPts = new ArrayList<Integer>();		
+		String[] singleCoords = line.getCoordinates().split(" ");
+		
+		for(String s: singleCoords){
+			String[] coords = s.split(",");
+			xPts.add(Integer.parseInt(coords[0]));					//All X coords
+			yPts.add(Integer.parseInt(coords[1]));					//All Y coords
+		}
+		int CoordX1 = xPts.get(0);
+		int CoordX2 = xPts.get(0);
+		int CoordY1 = yPts.get(0);
+		int CoordY2 = yPts.get(0);
+		
+		//find outlining points
+		for(int x : xPts){
+			if(CoordX1>x){
+				CoordX1 = x;
+			}
+			if(CoordX2<x){
+				CoordX2 = x;
+			}
+		}
+		for(int y : yPts){
+			if(CoordY1<y){
+				CoordY1 = y;
+			}
+			if(CoordY2>y){
+				CoordY2 = y;
+			}
+		}
+		
+		baseLine.setPoints(CoordX1+","+CoordY1+" "+CoordX2+","+CoordY1);
+		return baseLine;
+	}
+
+
 	public static String getFullText(PcGtsType pc){
 		String fullText = "";
 		for(TextRegionType tr : PageXmlUtils.getTextRegions(pc)){
@@ -143,7 +190,7 @@ public class IndexTextUtils {
 	//Get coordinates of word
 	public static Map<String, String> getPixelCoordinates(String word, TrpPage p){
 		
-		Map<String,String> coords = new HashMap();
+		Map<String,String> coords = new HashMap<String,String>();
 		PcGtsType pc = new PcGtsType();
 		try {
 			pc = PageXmlUtils.unmarshal(p.getCurrentTranscript().getUrl());
@@ -158,14 +205,14 @@ public class IndexTextUtils {
 				if(ttl.getWordCount() > 0){
 					for(WordType tw : ttl.getWord()){
 						TrpWordType ttw = (TrpWordType) tw;
-						if(ttw.getUnicodeText().trim().replaceAll("\\p{Punct}", "").equals(word)){
+						if(ttw.getUnicodeText().trim().replaceAll("[^\\p{Alpha}\\p{Digit}]+", "").equals(word)){
 							coords.put(tr.getId()+":"+tl.getId()+":"+ttw.getId(), ttw.getCoordinates());
 						}
 					}
 				}else{
 					List<TrpWordType> lineWords = IndexTextUtils.getWordsFromLine(ttl);
 					for(TrpWordType tw : lineWords){
-						if(tw.getUnicodeText().trim().replaceAll("\\p{Punct}", "").equals(word)){
+						if(tw.getUnicodeText().trim().replaceAll("[^\\p{Alpha}\\p{Digit}]+", "").equals(word)){
 							coords.put(tr.getId()+":"+tl.getId(), tw.getCoordinates());
 						}
 					}

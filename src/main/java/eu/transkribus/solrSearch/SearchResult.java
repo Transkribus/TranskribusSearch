@@ -12,6 +12,8 @@ import org.apache.solr.common.SolrDocument;
 public class SearchResult {
 	private Map<String,ArrayList<String>> wordHighlights = new HashMap<String,ArrayList<String>>();
 	private Map<String,ArrayList<String>> lineHighlights = new HashMap<String,ArrayList<String>>();
+	private Map<String,ArrayList<String>> wordHighlightsLc = new HashMap<String,ArrayList<String>>();
+	private Map<String,ArrayList<String>> lineHighlightsLc = new HashMap<String,ArrayList<String>>();
 	private Map<String,String> authors = new HashMap<String,String>();
 	private Map<String,String> parentDocs = new HashMap<String,String>();
 	private Map<String,String> pageUrls = new HashMap<String,String>();
@@ -25,7 +27,10 @@ public class SearchResult {
 	public void getFromSolrResponse(QueryResponse response){
 		Map<String, Map<String, List<String>>> obj = response.getHighlighting();
 		for(String key : obj.keySet()){
-			wordHighlights.put(key, (ArrayList<String>) obj.get(key).get("fullTextFromWords"));			
+			wordHighlights.put(key, (ArrayList<String>) obj.get(key).get("fullTextFromWords"));	
+			lineHighlights.put(key, (ArrayList<String>) obj.get(key).get("fullTextFromLines"));
+			wordHighlightsLc.put(key, (ArrayList<String>) obj.get(key).get("fullTextFromWordsLc"));	
+			lineHighlightsLc.put(key, (ArrayList<String>) obj.get(key).get("fullTextFromLinesLc"));
 		}
 		
 		for(SolrDocument result : response.getResults()){
@@ -56,26 +61,16 @@ public class SearchResult {
 	}
 	
 	
-	public SearchResult(QueryResponse response){
+	public SearchResult(QueryResponse response){		
 		
-		Map<String, Map<String, List<String>>> obj = response.getHighlighting();
-		ArrayList<String> highlString = new ArrayList<String>();
-		for(String key : obj.keySet()){
-
-			for(String string : obj.get(key).get("fullTextFromWords")){
-				highlString.add(string);
-			}
-			wordHighlights.put(key, highlString);
-			highlString.clear();
-			for(String string : obj.get(key).get("fullTextFromLines")){
-				highlString.add(string);
-			}
-			lineHighlights.put(key, highlString);
-			
-			
-		}
-		
-		
+	}
+	
+	public Map<String,ArrayList<String>> getWordsLcHighlights(){
+		return wordHighlightsLc;
+	}
+	
+	public Map<String,ArrayList<String>> getLinesLcHighlights(){
+		return lineHighlightsLc;
 	}
 	
 	public Map<String,ArrayList<String>> getWordsHighlights(){

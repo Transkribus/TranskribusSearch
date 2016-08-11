@@ -441,7 +441,7 @@ vate SolrInputDocument createIndexDocument(TrpDocMetadata md){
 			String fullTextFromWords ="";
 			TrpPageType pt = (TrpPageType)pc.getPage();
 			for(TrpTextRegionType ttr : pt.getTextRegions(false)){
-				fullTextFromWords += ttr.getTextFromWords(true).replaceAll("\n", " ").replaceAll("\\p{Punct}", "");
+				fullTextFromWords += ttr.getTextFromWords(true).replaceAll("\n", " ");//.replaceAll("\\p{Punct}", ".");
 			}
 			
 			doc.addField(SearchField.Fulltextfromlines.getFieldName(), PageXmlUtils.getFulltextFromLines(pc));
@@ -456,7 +456,7 @@ vate SolrInputDocument createIndexDocument(TrpDocMetadata md){
 			
 			ArrayList<TrpWordType> words = getWordList(pc);
 			for(TrpWordType word : words){
-				String wordAndCoords = word.getUnicodeText().replaceAll("\\p{Punct}", "")
+				String wordAndCoords = word.getUnicodeText().replaceAll("[^\\p{Alpha}\\p{Digit}]+", "")
 										+ ":"+word.getLine().getRegion().getId()+"/"
 										+ word.getLine().getId()+"/"
 										+ (word.getId().isEmpty() ? "_empty_" : word.getId())
@@ -500,6 +500,7 @@ vate SolrInputDocument createIndexDocument(TrpDocMetadata md){
 						ArrayList<TrpWordType> trpWordsInLine = new ArrayList<TrpWordType>();	
 						ArrayList<TrpWordType> wordsGeneratedFromLine = IndexTextUtils.getWordsFromLine(ttl);
 						
+						
 						if(ttl.getWordCount() > 0){							//If textline contains TrpWords index them
 							
 							for(WordType tw: tl.getWord()){		
@@ -511,13 +512,16 @@ vate SolrInputDocument createIndexDocument(TrpDocMetadata md){
 									String newWordCoords = IndexTextUtils.reduceCoordinates(singleCoords);
 									trptw.setCoordinates(newWordCoords, trptw);
 								}
-								
-								trpWordsInLine.add(trptw);
+								if(!trptw.getUnicodeText().trim().isEmpty()){
+									trpWordsInLine.add(trptw);
+								}
 							}
 						}else{												//If textline contains no words create them
 							for(TrpWordType trptw: wordsGeneratedFromLine){
 								if(trptw != null){
-									trpWordsInLine.add(trptw);
+									if(!trptw.getUnicodeText().trim().isEmpty()){
+										trpWordsInLine.add(trptw);
+									}
 								}
 							}
 						}					
@@ -528,7 +532,7 @@ vate SolrInputDocument createIndexDocument(TrpDocMetadata md){
 								contained = false;
 								
 								for(TrpWordType wordInLine : trpWordsInLine){
-									if(wordInLine.getUnicodeText().equals(generatedWord.getUnicodeText())){
+									if(wordInLine.getUnicodeText().replaceAll("[^\\p{Alpha}\\p{Digit}]+", "").equals(generatedWord.getUnicodeText())){
 										contained = true;
 									}
 								}
@@ -538,7 +542,6 @@ vate SolrInputDocument createIndexDocument(TrpDocMetadata md){
 				
 							}
 						}
-						
 						words.addAll(trpWordsInLine);
 					}
 
