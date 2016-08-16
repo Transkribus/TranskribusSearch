@@ -24,6 +24,7 @@ import eu.transkribus.core.model.beans.TrpCollection;
 import eu.transkribus.core.model.beans.TrpDoc;
 import eu.transkribus.core.model.beans.TrpDocMetadata;
 import eu.transkribus.core.model.beans.TrpPage;
+import eu.transkribus.core.model.beans.customtags.CustomTag;
 import eu.transkribus.core.model.beans.pagecontent.PcGtsType;
 import eu.transkribus.core.model.beans.pagecontent.TextLineType;
 import eu.transkribus.core.model.beans.pagecontent.TextRegionType;
@@ -430,6 +431,15 @@ vate SolrInputDocument createIndexDocument(TrpDocMetadata md){
 			doc.addField(SearchField.PageUrl.getFieldName(), p.getUrl().toString());
 			
 			
+			List<TrpCollection> colls = md.getColList();
+			ArrayList<Integer> colIds = new ArrayList<Integer>();
+			for(TrpCollection c : colls){
+				colIds.add(c.getColId());
+			}
+			doc.addField(SearchField.ColId.getFieldName(), colIds);	
+			
+			
+			
 			PcGtsType pc = new PcGtsType();
 			try {
 				pc = PageXmlUtils.unmarshal(p.getCurrentTranscript().getUrl());
@@ -440,8 +450,28 @@ vate SolrInputDocument createIndexDocument(TrpDocMetadata md){
 			
 			String fullTextFromWords ="";
 			TrpPageType pt = (TrpPageType)pc.getPage();
+			ArrayList<CustomTag> tags = new ArrayList<CustomTag>();
 			for(TrpTextRegionType ttr : pt.getTextRegions(false)){
-				fullTextFromWords += ttr.getTextFromWords(true).replaceAll("\n", " ");//.replaceAll("\\p{Punct}", ".");
+				//Get page fulltext from words
+				fullTextFromWords += ttr.getTextFromWords(true).replaceAll("\n", " ");//.replaceAll("\\p{Punct}", ".");				
+				
+				//Get tags on page
+				List<TextLineType> tls = ttr.getTextLine();
+				for(TextLineType tl : tls){
+					TrpTextLineType ttl = (TrpTextLineType) tl;
+					if(ttl.getCustomTagList() != null){
+						if(!ttl.getCustomTagList().getIndexedTagNames().isEmpty()){
+							for(CustomTag tag : ttl.getCustomTagList().getTags()){
+								if(tag.getTagName() != "readingOrder"){
+									tags.add(tag);									
+								}
+							}							
+						}						
+					}				
+				}
+				
+				
+				
 			}
 			
 			doc.addField(SearchField.Fulltextfromlines.getFieldName(), PageXmlUtils.getFulltextFromLines(pc));
@@ -456,25 +486,27 @@ vate SolrInputDocument createIndexDocument(TrpDocMetadata md){
 			
 			ArrayList<TrpWordType> words = getWordList(pc);
 			for(TrpWordType word : words){
-				String wordAndCoords = word.getUnicodeText().replaceAll("[^\\p{Alpha}\\p{Digit}]+", "")
-										+ ":"+word.getLine().getRegion().getId()+"/"
-										+ word.getLine().getId()+"/"
-										+ (word.getId().isEmpty() ? "_empty_" : word.getId())
-										+ ":"+word.getCoordinates();
+				if(!word.getUnicodeText().trim().replaceAll("\\p{Punct}", "").isEmpty()){
+					String wordAndCoords = word.getUnicodeText().replaceAll("\\p{Punct}", "")
+											+ ":"+word.getLine().getRegion().getId()+"/"
+											+ word.getLine().getId()+"/"
+											+ (word.getId().isEmpty() ? "_empty_" : word.getId())
+											+ ":"+word.getCoordinates();
+	
+					doc.addField(SearchField.WordCoords.getFieldName(), wordAndCoords);
+				}
+			}
+			
+			
+			
 
-				doc.addField(SearchField.WordCoords.getFieldName(), wordAndCoords);
+			
+			for(CustomTag tag : tags){
+				doc.addField("tags",
+						tag.getTagName().replaceAll("\\p{Punct}", "")
+						+ "|" 
+						+tag.getContainedText().replaceAll("\\p{Punct}", ""));
 			}
-			
-			
-			
-			List<TrpCollection> colls = md.getColList();
-			ArrayList<Integer> colIds = new ArrayList<Integer>();
-			for(TrpCollection c : colls){
-				colIds.add(c.getColId());
-			}
-			doc.addField(SearchField.ColId.getFieldName(), colIds);	
-			
-			
 			
 			//doc.addField("_root_", p.getDocId() + "_md");
 
@@ -532,7 +564,7 @@ vate SolrInputDocument createIndexDocument(TrpDocMetadata md){
 								contained = false;
 								
 								for(TrpWordType wordInLine : trpWordsInLine){
-									if(wordInLine.getUnicodeText().replaceAll("[^\\p{Alpha}\\p{Digit}]+", "").equals(generatedWord.getUnicodeText())){
+									if(wordInLine.getUnicodeText().replaceAll("\\p{Punct}", "").equals(generatedWord.getUnicodeText())){
 										contained = true;
 									}
 								}

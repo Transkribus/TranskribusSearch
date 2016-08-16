@@ -69,7 +69,7 @@ public class IndexTextUtils {
 								+ " " + wordCoordX2 + "," + wordCoordY2
 								+ " " + wordCoordX1 + "," + wordCoordY2;								
 								
-			String outputWord = s.replaceAll("[^\\p{Alpha}\\p{Digit}]+", "").trim(); //Remove punctuation / set lowercase / trim
+			String outputWord = s.replaceAll("\\p{Punct}", "").trim(); //Remove punctuation / set lowercase / trim
 			
 			TrpWordType trpWord = new TrpWordType();
 			if(trpWord != null && outputWord != ""){			
@@ -205,14 +205,14 @@ public class IndexTextUtils {
 				if(ttl.getWordCount() > 0){
 					for(WordType tw : ttl.getWord()){
 						TrpWordType ttw = (TrpWordType) tw;
-						if(ttw.getUnicodeText().trim().replaceAll("[^\\p{Alpha}\\p{Digit}]+", "").equals(word)){
+						if(ttw.getUnicodeText().trim().replaceAll("\\p{Punct}", "").equals(word)){
 							coords.put(tr.getId()+":"+tl.getId()+":"+ttw.getId(), ttw.getCoordinates());
 						}
 					}
 				}else{
 					List<TrpWordType> lineWords = IndexTextUtils.getWordsFromLine(ttl);
 					for(TrpWordType tw : lineWords){
-						if(tw.getUnicodeText().trim().replaceAll("[^\\p{Alpha}\\p{Digit}]+", "").equals(word)){
+						if(tw.getUnicodeText().trim().replaceAll("\\p{Punct}", "").equals(word)){
 							coords.put(tr.getId()+":"+tl.getId(), tw.getCoordinates());
 						}
 					}
