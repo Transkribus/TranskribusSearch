@@ -7,6 +7,9 @@ import java.util.Map;
 
 import javax.xml.bind.JAXBException;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import eu.transkribus.core.model.beans.TrpPage;
 import eu.transkribus.core.model.beans.pagecontent.BaselineType;
 import eu.transkribus.core.model.beans.pagecontent.PcGtsType;
@@ -18,7 +21,7 @@ import eu.transkribus.core.model.beans.pagecontent_trp.TrpWordType;
 import eu.transkribus.core.util.PageXmlUtils;
 
 public class IndexTextUtils {	
-	
+	private static final Logger logger = LoggerFactory.getLogger(IndexTextUtils.class);
 	
 	//Create TrpWords from TextLine
 	public static ArrayList<TrpWordType> getWordsFromLine(TrpTextLineType line){
@@ -36,7 +39,8 @@ public class IndexTextUtils {
 		String baseLine = line.getBaseline().getPoints();
 		String string = line.getUnicodeText();	
 		string = string.replaceAll("\\[", ".").replaceAll("\\]",".").replaceAll("\\p{Punct}", ".").replaceAll("¬", ".");
-		String[] basePts = baseLine.split(" ");
+		
+		String[] basePts = baseLine.trim().split(" ");
 
 		
 		ArrayList<Integer> xPts = new ArrayList<Integer>();
@@ -44,8 +48,14 @@ public class IndexTextUtils {
 		
 		for(String s: basePts){
 			String[] coords = s.split(",");
-			xPts.add(Integer.parseInt(coords[0]));					//Baseline X coords
-			yPts.add(Integer.parseInt(coords[1]));					//Baseline Y coords
+			try {
+				xPts.add(Integer.parseInt(coords[0]));					//Baseline X coords
+				yPts.add(Integer.parseInt(coords[1]));					//Baseline Y coords
+			} catch(Exception e ){
+				logger.error("Could not parse String: " + s, e);
+				logger.error("Baseline = " + baseLine);
+				throw e;
+			}
 		}
 		int baseLen = Math.abs(xPts.get(xPts.size()-1)-xPts.get(0)); //Length of  baseline in px
 		int baseStartX = xPts.get(0);
