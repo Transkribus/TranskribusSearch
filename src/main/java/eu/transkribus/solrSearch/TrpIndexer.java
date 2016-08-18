@@ -76,20 +76,25 @@ public class TrpIndexer {
 		//indexDocMd(doc.getMd());
 		for(TrpPage p: doc.getPages()){
 			indexPage(p, doc.getMd());
-			try {
-				server.commit();
-				//server.optimize();
-				LOGGER.info("Commited page " + p.getPageNr() + " | doc = " + p.getDocId());
-			} catch (SolrServerException | IOException e) {
-				LOGGER.error("Could not commit doc MD to solr server.");
-				e.printStackTrace();
+			LOGGER.info("Added page " + p.getPageNr() + " | doc = " + p.getDocId());
+			if(p.getPageNr() % 50 == 0) {
+				commitToIndex();
 			}
-
 		}
+		commitToIndex();
 		if(doOptimize){ 
 			optimizeIndex();
 		}
 	}	
+	
+	public void commitToIndex() {
+		try {
+			LOGGER.info("Commiting...");
+			server.commit();
+		} catch (SolrServerException | IOException e) {
+			LOGGER.error("Could not commit doc MD to solr server.", e);
+		}
+	}
 	
 	public void optimizeIndex(){
 		LOGGER.debug("Optimizing index...");
@@ -97,7 +102,6 @@ public class TrpIndexer {
 			server.optimize();
 		} catch (SolrServerException | IOException e) {
 			LOGGER.error(e.getMessage(), e);
-			e.printStackTrace();
 		}
 		LOGGER.debug("Index is now optimized.");
 	}
