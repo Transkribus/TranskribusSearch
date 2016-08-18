@@ -76,7 +76,7 @@ public class TrpIndexer {
 		for(TrpPage p: doc.getPages()){
 			indexPage(p, doc.getMd());
 			LOGGER.info("Added page " + p.getPageNr() + " | doc = " + p.getDocId());
-			if(p.getPageNr() % 30 == 0) {
+			if(p.getPageNr() % 50 == 0) {
 				commitToIndex();
 			}
 		}
@@ -88,6 +88,7 @@ public class TrpIndexer {
 	
 	public void commitToIndex() {
 		try {
+			LOGGER.info("Commiting...");
 			server.commit();
 		} catch (SolrServerException | IOException e) {
 			LOGGER.error("Could not commit doc MD to solr server.", e);
