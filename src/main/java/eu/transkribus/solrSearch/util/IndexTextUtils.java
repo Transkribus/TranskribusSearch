@@ -60,6 +60,8 @@ public class IndexTextUtils {
 		int baseLen = Math.abs(xPts.get(xPts.size()-1)-xPts.get(0)); //Length of  baseline in px
 		int baseStartX = xPts.get(0);
 		
+		int baseAvgY = getAverage(yPts);
+		
 		int wordCounter = 0;
 		for(String s : string.split(" ")){
 			wordCounter++;
@@ -69,8 +71,8 @@ public class IndexTextUtils {
 			float subLength = (float) s.length() / (float) string.length();			//Length of word
 			int subLengthPx = (int) (subLength*(float)baseLen);						//Length of word in px
 			int subHeightPx = (int)((float) baseLen / (float)string.length() * 2.0);//Height of word in px (est. 3 characters)
-			int wordCoordY1 = yPts.get(0) + (int)((float) subHeightPx / 4.0);		//Y coordinates of baseline
-			int wordCoordY2 = yPts.get(0) - subHeightPx;							//Y coordinates of word ceiling				
+			int wordCoordY1 = baseAvgY + (int)((float) subHeightPx / 4.0);			//Y coordinates of baseline
+			int wordCoordY2 = baseAvgY - subHeightPx;								//Y coordinates of word ceiling				
 			int wordCoordX1 = (baseStartX + subStartPx);							//X ccordinates of word start
 			int wordCoordX2 =  baseStartX + subStartPx + subLengthPx;				//X coordinates of word end		
 			
@@ -100,6 +102,15 @@ public class IndexTextUtils {
 		return trpWords;
 	}
 	
+	public static int getAverage(ArrayList<Integer> points){
+		float output = 0;
+		for(Integer i : points){
+			output += i;
+		}
+		output /= (float)points.size();
+		
+		return Math.round(output);
+	}
 	
 	private static BaselineType generateBaseline(TrpTextLineType line) {
 		

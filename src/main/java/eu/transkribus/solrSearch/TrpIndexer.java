@@ -559,6 +559,7 @@ vate SolrInputDocument createIndexDocument(TrpDocMetadata md){
 							}
 						}					
 						
+						//Check if line text contains different words
 						if(ttl.getWordCount() > 0){	
 							boolean contained = false;
 							for(TrpWordType generatedWord : wordsGeneratedFromLine){
