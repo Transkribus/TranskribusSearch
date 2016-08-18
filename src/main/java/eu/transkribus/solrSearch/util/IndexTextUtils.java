@@ -38,7 +38,7 @@ public class IndexTextUtils {
 		
 		String baseLine = line.getBaseline().getPoints();
 		String string = line.getUnicodeText();	
-		string = string.replaceAll("\\[", ".").replaceAll("\\]",".").replaceAll("\\p{Punct}", ".").replaceAll("¬", ".");
+		string = string.replaceAll("-"," ").replaceAll("\\p{Punct}", ".").replaceAll("¬", ".");
 		
 		String[] basePts = baseLine.trim().split(" ");
 
@@ -69,8 +69,8 @@ public class IndexTextUtils {
 			float subLength = (float) s.length() / (float) string.length();			//Length of word
 			int subLengthPx = (int) (subLength*(float)baseLen);						//Length of word in px
 			int subHeightPx = (int)((float) baseLen / (float)string.length() * 2.0);//Height of word in px (est. 3 characters)
-			int wordCoordY1 = yPts.get(0) + (int)((float) subHeightPx / 4.0);			//Y coordinates of baseline
-			int wordCoordY2 = yPts.get(0) - subHeightPx;								//Y coordinates of word ceiling				
+			int wordCoordY1 = yPts.get(0) + (int)((float) subHeightPx / 4.0);		//Y coordinates of baseline
+			int wordCoordY2 = yPts.get(0) - subHeightPx;							//Y coordinates of word ceiling				
 			int wordCoordX1 = (baseStartX + subStartPx);							//X ccordinates of word start
 			int wordCoordX2 =  baseStartX + subStartPx + subLengthPx;				//X coordinates of word end		
 			
@@ -79,7 +79,7 @@ public class IndexTextUtils {
 								+ " " + wordCoordX2 + "," + wordCoordY2
 								+ " " + wordCoordX1 + "," + wordCoordY2;								
 								
-			String outputWord = s.replaceAll("\\p{Punct}", "").trim(); //Remove punctuation / set lowercase / trim
+			String outputWord = s.replaceAll("\\p{Punct}", "").trim(); 				//Remove punctuation / set lowercase / trim
 			
 			TrpWordType trpWord = new TrpWordType();
 			if(trpWord != null && outputWord != ""){			

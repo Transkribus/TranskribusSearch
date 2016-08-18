@@ -44,6 +44,7 @@ public class TrpIndexer {
 	private static SolrClient server;
 	private static final Logger LOGGER = LoggerFactory.getLogger(TrpIndexer.class);
 	private static final String EMPTY_FIELD = "_EMPTY_FIELD";
+	private static final String SPECIAL_SYMBOLS = "[@©«»„“”°]";
 	
 	//Constructor
 	public TrpIndexer(final String serverUrl){
@@ -470,15 +471,11 @@ vate SolrInputDocument createIndexDocument(TrpDocMetadata md){
 					}				
 				}
 				
-				
-				
 			}
 			
 			doc.addField(SearchField.Fulltextfromlines.getFieldName(), PageXmlUtils.getFulltextFromLines(pc));
 			
-			doc.addField(SearchField.Fulltextfromwords.getFieldName(), fullTextFromWords);
-			
-			
+			doc.addField(SearchField.Fulltextfromwords.getFieldName(), fullTextFromWords);		
 
 
 			//Indexing raw text field no longer supported in schema
@@ -493,7 +490,7 @@ vate SolrInputDocument createIndexDocument(TrpDocMetadata md){
 											+ (word.getId().isEmpty() ? "_empty_" : word.getId())
 											+ ":"+word.getCoordinates();
 	
-					doc.addField(SearchField.WordCoords.getFieldName(), wordAndCoords);
+					doc.addField(SearchField.WordCoords.getFieldName(), wordAndCoords.replaceAll(SPECIAL_SYMBOLS, ""));
 				}
 			}
 			
