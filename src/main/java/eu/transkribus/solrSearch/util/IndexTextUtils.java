@@ -60,7 +60,7 @@ public class IndexTextUtils {
 		int baseLen = Math.abs(xPts.get(xPts.size()-1)-xPts.get(0)); //Length of  baseline in px
 		int baseStartX = xPts.get(0);
 		
-		int baseAvgY = getAverage(yPts);
+		//int baseAvgY = getAverage(yPts);	
 		
 		int wordCounter = 0;
 		for(String s : string.split(" ")){
@@ -71,8 +71,10 @@ public class IndexTextUtils {
 			float subLength = (float) s.length() / (float) string.length();			//Length of word
 			int subLengthPx = (int) (subLength*(float)baseLen);						//Length of word in px
 			int subHeightPx = (int)((float) baseLen / (float)string.length() * 2.0);//Height of word in px (est. 3 characters)
-			int wordCoordY1 = baseAvgY + (int)((float) subHeightPx / 4.0);			//Y coordinates of baseline
-			int wordCoordY2 = baseAvgY - subHeightPx;								//Y coordinates of word ceiling				
+			int nearestIndex = getNearestIndex(xPts, subStartPx+xPts.get(0));			
+			int baseY = yPts.get(nearestIndex);
+			int wordCoordY1 = baseY + (int)((float) subHeightPx / 4.0);			//Y coordinates of baseline
+			int wordCoordY2 = baseY - subHeightPx;								//Y coordinates of word ceiling				
 			int wordCoordX1 = (baseStartX + subStartPx);							//X ccordinates of word start
 			int wordCoordX2 =  baseStartX + subStartPx + subLengthPx;				//X coordinates of word end		
 			
@@ -102,6 +104,17 @@ public class IndexTextUtils {
 		return trpWords;
 	}
 	
+	private static int getNearestIndex(ArrayList<Integer> xPts, int posX) {
+		int indexPos = 0;
+		int minDist = Math.abs(xPts.get(0)-posX);
+		for(int i=1; i < xPts.size(); i++){
+			if(Math.abs(xPts.get(i)-posX) < minDist){
+				indexPos = i;
+			}
+		}		
+		return indexPos;
+	}
+
 	public static int getAverage(ArrayList<Integer> points){
 		float output = 0;
 		for(Integer i : points){
@@ -127,7 +140,6 @@ public class IndexTextUtils {
 		int CoordX1 = xPts.get(0);
 		int CoordX2 = xPts.get(0);
 		int CoordY1 = yPts.get(0);
-		int CoordY2 = yPts.get(0);
 		
 		//find outlining points
 		for(int x : xPts){
@@ -138,14 +150,7 @@ public class IndexTextUtils {
 				CoordX2 = x;
 			}
 		}
-		for(int y : yPts){
-			if(CoordY1<y){
-				CoordY1 = y;
-			}
-			if(CoordY2>y){
-				CoordY2 = y;
-			}
-		}
+		CoordY1=getAverage(yPts);
 		
 		baseLine.setPoints(CoordX1+","+CoordY1+" "+CoordX2+","+CoordY1);
 		return baseLine;
