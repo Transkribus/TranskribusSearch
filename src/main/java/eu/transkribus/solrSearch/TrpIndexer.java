@@ -37,7 +37,9 @@ import eu.transkribus.core.util.PageXmlUtils;
 import eu.transkribus.solrSearch.util.IndexTextUtils;
 import eu.transkribus.solrSearch.util.Schema.SearchField;
 
-
+/**
+ * Main class for indexing with Apache Solr.
+ */
 public class TrpIndexer {
 	
 	private final String serverUrl; 
@@ -46,7 +48,10 @@ public class TrpIndexer {
 	private static final String EMPTY_FIELD = "_EMPTY_FIELD";
 	private static final String SPECIAL_SYMBOLS = "[@©«»„“”°]";
 	
-	//Constructor
+	/**
+	 * Constructor
+	 * @param serverUrl String containing Url to solr server e.g. "http://localhost:8983/solr/Core1"
+	 */
 	public TrpIndexer(final String serverUrl){
 		if(serverUrl == null || serverUrl.isEmpty())
 			throw new IllegalArgumentException("ServerUrl must not be empty!");
@@ -61,17 +66,25 @@ public class TrpIndexer {
 		server.close();
 	}
 	
-	//Index document by indexing metadata and all pages
+	/**
+	 * Index a document and optimize
+	 * @param doc Trp Document to be indexed
+	 * @see indexDoc(TrpDoc doc, boolean doOptimize)
+	 */
 	public void indexDoc(TrpDoc doc){
 		indexDoc(doc, true);
 	}	
 	
-	//Index document by indexing metadata and all pages
+	/**
+	 * Index document and optimize if wanted
+	 * @param doc Trp Document to be indexed
+	 * @param doOptimize If true optimize index after indexing
+	 */
 	public void indexDoc(TrpDoc doc, boolean doOptimize){
 		
 		
 //		if(isIndexed(doc)){
-//			removeIndex(doc);               //probably not necessary
+//			removeIndex(doc);               //probably no longer necessary
 //		}
 		
 		//indexDocMd(doc.getMd());
@@ -250,12 +263,19 @@ public class TrpIndexer {
 		return success;
 	}
 	
-	//Delete document and all children from index
+	/**
+	 * Delete all pages of document from index
+	 * @param doc TrpDoc to be deleted from index
+	 * @see removeIndex(int docId) to directly remove by document id
+	 */
 	public void removeIndex(TrpDoc doc){
 		removeIndex(doc.getId());
 	}
 	
-	//Delete document and all children from index
+	/**
+	 * Delete all pages of document from index
+	 * @param docId Id of document to be deleted
+	 */
 	public void removeIndex(int docId){
 		String queryString = "id:"+docId+"*";
 		try {
@@ -268,12 +288,19 @@ public class TrpIndexer {
 		}
 	}
 	
-	//Delete single page and all children from index
+	/**
+	 * Delete single page from index
+	 * @param page TrpPage to be deleted
+	 */
 	public void removeIndex(TrpPage page){
 		removeIndex(page.getDocId(), page.getPageNr());
 	}
 	
-	//Delete single page and all children from index
+	/**
+	 * Delete single page from index
+	 * @param docId Id of document containing page
+	 * @param pageNr Page number of page to be deleted
+	 */
 	public void removeIndex(int docId, int pageNr){
 		String queryString = "id:"+docId+"_"+pageNr+"*";
 		try {
@@ -287,7 +314,11 @@ public class TrpIndexer {
 	}
 		
 	
-	//Delete entire index
+	/**
+	 * Deletes the entire index.
+	 * <br>
+	 * <b>Use with caution!</b>
+	 */
 	public void resetIndex(){
 		String queryString = "*:*";
 		try {
@@ -516,8 +547,10 @@ vate SolrInputDocument createIndexDocument(TrpDocMetadata md){
 	
 	
 	
-	/*
-	 * Returns a list of TrpWords found in page transcript
+	/**
+	 * Returns a list of TrpWords contained in page transcript.<br>
+	 * TrpWords are generated from TrpLines when necessary.
+	 * @param pc PcGtsType gained from PageXmlUtils.unmarshal(<i>pageUrl</i>)
 	 */
 	public ArrayList<TrpWordType> getWordList(PcGtsType pc){
 		

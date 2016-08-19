@@ -19,14 +19,18 @@ import eu.transkribus.core.model.beans.pagecontent.WordType;
 import eu.transkribus.core.model.beans.pagecontent_trp.TrpTextLineType;
 import eu.transkribus.core.model.beans.pagecontent_trp.TrpWordType;
 import eu.transkribus.core.util.PageXmlUtils;
-
+/**
+ * Class containing various tools used when indexing transcript documents
+ */
 public class IndexTextUtils {	
 	private static final Logger logger = LoggerFactory.getLogger(IndexTextUtils.class);
 	
-	/*
+	/**
 	 * Generates Trp Words with positions from a Trp Line. 
 	 * Coordinates are estimated from baseline coordinates and 
 	 * the relative word positions inside the line text string
+	 * @param	line	Trp text line
+	 * @return	List of TrpWordType in text line
 	 */
 	public static ArrayList<TrpWordType> getWordsFromLine(TrpTextLineType line){
 		
@@ -109,8 +113,11 @@ public class IndexTextUtils {
 		return trpWords;
 	}
 	
-	/*
-	 * Find index of point in xPts list that is closest to posX
+	/**
+	 * Find the list index of point in xPts list that is closest to posX
+	 * @param xPts List of coordinates
+	 * @param posX Point
+	 * @return Index position of nearest point
 	 */
 	private static int getNearestIndex(ArrayList<Integer> xPts, int posX) {
 		int indexPos = 0;
@@ -181,9 +188,11 @@ public class IndexTextUtils {
 	}
 	
 	
-	/* 
+	/**
 	 * Takes arbitrary coordinate string array and 
 	 * returns 4 coordinate points on outline edges
+	 * @param singleCoords String array of coordinates, separated with a comma
+	 * @return Complete string of reduced x and y coordinates
 	 */
 	public static String reduceCoordinates(String[] singleCoords){
 			ArrayList<Integer> xPts = new ArrayList<Integer>();
@@ -227,7 +236,7 @@ public class IndexTextUtils {
 		}
 	
 	
-	/*
+	/**
 	 * Get coordinates of a word by opening transcript of TrpPage p 
 	 * and comparing String word to all words on page.
 	 */
