@@ -39,7 +39,7 @@ import eu.transkribus.solrSearch.util.Schema.SearchField;
 
 
 public class TrpIndexer {
-	//solr url can also be taken from solr.properties - see constructor
+	
 	private final String serverUrl; 
 	private static SolrClient server;
 	private static final Logger LOGGER = LoggerFactory.getLogger(TrpIndexer.class);
@@ -68,10 +68,11 @@ public class TrpIndexer {
 	
 	//Index document by indexing metadata and all pages
 	public void indexDoc(TrpDoc doc, boolean doOptimize){
-		//Check if document is already indexed
-		if(isIndexed(doc)){
-			removeIndex(doc);
-		}
+		
+		
+//		if(isIndexed(doc)){
+//			removeIndex(doc);               //probably not necessary
+//		}
 		
 		//indexDocMd(doc.getMd());
 		for(TrpPage p: doc.getPages()){
@@ -481,9 +482,6 @@ vate SolrInputDocument createIndexDocument(TrpDocMetadata md){
 			
 			doc.addField(SearchField.Fulltextfromwords.getFieldName(), fullTextFromWords);		
 
-
-			//Indexing raw text field no longer supported in schema
-			//doc.addField(SearchField.FulltextRaw.getFieldName(), JaxbUtils.marshalToString(pc));
 			
 			ArrayList<TrpWordType> words = getWordList(pc);
 			for(TrpWordType word : words){
@@ -518,16 +516,17 @@ vate SolrInputDocument createIndexDocument(TrpDocMetadata md){
 	
 	
 	
-
+	/*
+	 * Returns a list of TrpWords found in page transcript
+	 */
 	public ArrayList<TrpWordType> getWordList(PcGtsType pc){
 		
-		ArrayList<TrpWordType> words = new ArrayList<TrpWordType>();
-		
+		ArrayList<TrpWordType> words = new ArrayList<TrpWordType>();		
 		
 		for( TextRegionType tr : PageXmlUtils.getTextRegions(pc)){			//Check all textregions of page
 			for(TextLineType tl : tr.getTextLine()){						//Check all textlines of textregion
 					TrpTextLineType ttl = (TrpTextLineType) tl;
-					if(!(ttl.getUnicodeText().isEmpty()  && ttl.getTextFromWords(true).isEmpty()) ){					//Check if textline is empty
+					if(!(ttl.getUnicodeText().isEmpty()  && ttl.getTextFromWords(true).isEmpty()) ){
 						
 						
 						ArrayList<TrpWordType> trpWordsInLine = new ArrayList<TrpWordType>();	
@@ -541,7 +540,7 @@ vate SolrInputDocument createIndexDocument(TrpDocMetadata md){
 								TrpWordType trptw = (TrpWordType) tw;
 								
 								String[] singleCoords = trptw.getCoordinates().split(" ");
-								if(singleCoords.length > 4){								//If > 4 coordinates reduce to 4 at outlines
+								if(singleCoords.length > 4){								//If > 4 coordinates reduce to edges
 									String newWordCoords = IndexTextUtils.reduceCoordinates(singleCoords);
 									trptw.setCoordinates(newWordCoords, trptw);
 								}
@@ -549,7 +548,7 @@ vate SolrInputDocument createIndexDocument(TrpDocMetadata md){
 									trpWordsInLine.add(trptw);
 								}
 							}
-						}else{												//If textline contains no words create them
+						}else{												//If textline contains no TrpWords create them
 							for(TrpWordType trptw: wordsGeneratedFromLine){
 								if(trptw != null){
 									if(!trptw.getUnicodeText().trim().isEmpty()){
@@ -559,7 +558,8 @@ vate SolrInputDocument createIndexDocument(TrpDocMetadata md){
 							}
 						}					
 						
-						//Check if line text contains different words
+						//Check if line based text contains different words than word based text
+						//and add missing words if necessary
 						if(ttl.getWordCount() > 0){	
 							boolean contained = false;
 							for(TrpWordType generatedWord : wordsGeneratedFromLine){
@@ -571,48 +571,18 @@ vate SolrInputDocument createIndexDocument(TrpDocMetadata md){
 									}
 								}
 								if(!contained){
-									trpWordsInLine.add(generatedWord); //If word from generated line is not found in word list, add it
+									trpWordsInLine.add(generatedWord); 
 								}
 				
 							}
 						}
 						words.addAll(trpWordsInLine);
 					}
-
 			}
 
 		}
 		
-		
-		
-		
-		
 		return words;
 	}
-	
-	/*
-	//Create Solr document from Words
-	private SolrInputDocument createIndexDocument(TrpWordType word, int pageNr, int docId){
-		SolrInputDocument doc = new SolrInputDocument();
-		String wordText = word.getUnicodeText();		//Convert to lowercase
-		wordText = wordText.replaceAll("\\p{P}", ""); 				//Remove punctuation
-		String wordCoords = word.getCoordinates();					//Get coordinates 
-		String[] singleCoords = wordCoords.split(" ");
-		if(singleCoords.length > 4){								//If > 4 coordinates reduce to 4 at outlines
-			wordCoords = IndexTextUtils.reduceCoordinates(singleCoords);
-		}				
-		
-		doc.addField(SearchField.Id.getFieldName(), docId + "_" + pageNr + "_" + word.getId());
-		doc.addField(SearchField.Type.getFieldName(), "w");
-		doc.addField(SearchField.Wordtext.getFieldName(), wordText);
-		doc.addField(SearchField.TextCoords.getFieldName(), wordCoords);
-		doc.addField(SearchField.TextRegion.getFieldName(), word.getLine().getRegion().getId());
-		doc.addField(SearchField.TextLine.getFieldName(), word.getLine().getId());
-		doc.addField("_root_", docId+"_"+pageNr);
-		
-		return doc;
-		
-	}
-	*/
 	
 }

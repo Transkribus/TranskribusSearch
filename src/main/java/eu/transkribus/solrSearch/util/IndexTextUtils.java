@@ -23,7 +23,11 @@ import eu.transkribus.core.util.PageXmlUtils;
 public class IndexTextUtils {	
 	private static final Logger logger = LoggerFactory.getLogger(IndexTextUtils.class);
 	
-	//Create TrpWords from TextLine
+	/*
+	 * Generates Trp Words with positions from a Trp Line. 
+	 * Coordinates are estimated from baseline coordinates and 
+	 * the relative word positions inside the line text string
+	 */
 	public static ArrayList<TrpWordType> getWordsFromLine(TrpTextLineType line){
 		
 		ArrayList<TrpWordType> trpWords = new ArrayList<TrpWordType>();
@@ -60,7 +64,8 @@ public class IndexTextUtils {
 		int baseLen = Math.abs(xPts.get(xPts.size()-1)-xPts.get(0)); //Length of  baseline in px
 		int baseStartX = xPts.get(0);
 		
-		//int baseAvgY = getAverage(yPts);	
+//		int charLen = Math.round(((float)baseLen)/((float)string.length()));		
+//		int baseAvgY = getAverage(yPts);	
 		
 		int wordCounter = 0;
 		for(String s : string.split(" ")){
@@ -71,10 +76,10 @@ public class IndexTextUtils {
 			float subLength = (float) s.length() / (float) string.length();			//Length of word
 			int subLengthPx = (int) (subLength*(float)baseLen);						//Length of word in px
 			int subHeightPx = (int)((float) baseLen / (float)string.length() * 2.0);//Height of word in px (est. 3 characters)
-			int nearestIndex = getNearestIndex(xPts, subStartPx+xPts.get(0));			
-			int baseY = yPts.get(nearestIndex);
-			int wordCoordY1 = baseY + (int)((float) subHeightPx / 4.0);			//Y coordinates of baseline
-			int wordCoordY2 = baseY - subHeightPx;								//Y coordinates of word ceiling				
+			int nearestIndex = getNearestIndex(xPts, subStartPx+xPts.get(0));		//Find index of nearest x in basepts	
+			int baseY = yPts.get(nearestIndex);										//Get y position of nearest x coord
+			int wordCoordY1 = baseY + (int)((float) subHeightPx / 4.0);				//Y coordinates of baseline
+			int wordCoordY2 = baseY - subHeightPx;									//Y coordinates of word ceiling				
 			int wordCoordX1 = (baseStartX + subStartPx);							//X ccordinates of word start
 			int wordCoordX2 =  baseStartX + subStartPx + subLengthPx;				//X coordinates of word end		
 			
@@ -104,6 +109,9 @@ public class IndexTextUtils {
 		return trpWords;
 	}
 	
+	/*
+	 * Find index of point in xPts list that is closest to posX
+	 */
 	private static int getNearestIndex(ArrayList<Integer> xPts, int posX) {
 		int indexPos = 0;
 		int minDist = Math.abs(xPts.get(0)-posX);
@@ -114,7 +122,10 @@ public class IndexTextUtils {
 		}		
 		return indexPos;
 	}
-
+	
+	/*
+	 * Generate average value of points and round to nearest integer
+	 */
 	public static int getAverage(ArrayList<Integer> points){
 		float output = 0;
 		for(Integer i : points){
@@ -125,6 +136,10 @@ public class IndexTextUtils {
 		return Math.round(output);
 	}
 	
+	/*
+	 * Generate a BaselineType from a Trp TextLine.
+	 * Estimates baseline coordinates from line coordinates
+	 */
 	private static BaselineType generateBaseline(TrpTextLineType line) {
 		
 		BaselineType baseLine = new BaselineType();
@@ -156,21 +171,20 @@ public class IndexTextUtils {
 		return baseLine;
 	}
 
-
+	@Deprecated
 	public static String getFullText(PcGtsType pc){
 		String fullText = "";
 		for(TextRegionType tr : PageXmlUtils.getTextRegions(pc)){
-
-				fullText += tr.getUnicodeText();
-	
-		}
-		
-		
+				fullText += tr.getUnicodeText();	
+		}		
 		return fullText;
 	}
 	
 	
-	//Takes coordinate string and returns 4 coordinate points on outline
+	/* 
+	 * Takes arbitrary coordinate string array and 
+	 * returns 4 coordinate points on outline edges
+	 */
 	public static String reduceCoordinates(String[] singleCoords){
 			ArrayList<Integer> xPts = new ArrayList<Integer>();
 			ArrayList<Integer> yPts = new ArrayList<Integer>();		
@@ -213,17 +227,20 @@ public class IndexTextUtils {
 		}
 	
 	
-	//Get coordinates of word
+	/*
+	 * Get coordinates of a word by opening transcript of TrpPage p 
+	 * and comparing String word to all words on page.
+	 */
+	@Deprecated
 	public static Map<String, String> getPixelCoordinates(String word, TrpPage p){
 		
 		Map<String,String> coords = new HashMap<String,String>();
 		PcGtsType pc = new PcGtsType();
 		try {
 			pc = PageXmlUtils.unmarshal(p.getCurrentTranscript().getUrl());
-		} catch (JAXBException e) {
+		} catch (Exception e) {
 			e.printStackTrace();
-		}
-		
+		}		
 		
 		for(TextRegionType tr: PageXmlUtils.getTextRegions(pc)){
 			for(TextLineType tl : tr.getTextLine()){
@@ -245,9 +262,7 @@ public class IndexTextUtils {
 					
 				}
 			}
-		}
-		
-		
+		}		
 		
 		return coords;
 	}	
