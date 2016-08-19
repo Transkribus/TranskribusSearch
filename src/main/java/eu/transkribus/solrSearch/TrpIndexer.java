@@ -89,19 +89,24 @@ public class TrpIndexer {
 		
 		//indexDocMd(doc.getMd());
 		for(TrpPage p: doc.getPages()){
-			indexPage(p, doc.getMd());
-			LOGGER.info("Added page " + p.getPageNr() + " | doc = " + p.getDocId());
-			if(p.getPageNr() % 50 == 0) {
-				commitToIndex();
+			
+			if(!indexPage(p, doc.getMd())){
+				LOGGER.error("Could not add page " + p.getPageNr() + " | doc = " + p.getDocId());
+				continue;
+			} else {
+				LOGGER.info("Added page " + p.getPageNr() + " | doc = " + p.getDocId());
 			}
+//			if(p.getPageNr() % 50 == 0) {
+//				commitToIndex();
+//			}
 		}
-		commitToIndex();
+//		commitToIndex();
 		if(doOptimize){ 
 			optimizeIndex();
 		}
 	}	
 	
-	public void commitToIndex() {
+	private void commitToIndex() {
 		try {
 			LOGGER.info("Commiting...");
 			server.commit();
@@ -114,10 +119,10 @@ public class TrpIndexer {
 		LOGGER.debug("Optimizing index...");
 		try {
 			server.optimize();
-		} catch (SolrServerException | IOException e) {
+			LOGGER.debug("Index is now optimized.");
+		} catch (Exception e) {
 			LOGGER.error(e.getMessage(), e);
 		}
-		LOGGER.debug("Index is now optimized.");
 	}
 	
 	//Check if document is indexed
@@ -181,7 +186,7 @@ public class TrpIndexer {
 				success = submitDocToSolr(doc);
 				//indexText(p);
 			}
-		} catch (JAXBException e) {
+		} catch (Exception e) {
 			success = false;
 		}
 		return success;
@@ -252,9 +257,9 @@ public class TrpIndexer {
 			success = false;
 		}
 		try {
-			server.commit();
+//			server.commit();
 			server.optimize();
-			LOGGER.info("Commited page to solr server.");
+			LOGGER.info("Added page to solr server.");
 		} catch (SolrServerException | IOException e) {
 			LOGGER.error("Could not commit page to solr server.");
 			e.printStackTrace();
@@ -280,7 +285,7 @@ public class TrpIndexer {
 		String queryString = "id:"+docId+"*";
 		try {
 			server.deleteByQuery(queryString);
-			server.commit();
+//			server.commit();
 			server.optimize();
 		} catch (SolrServerException | IOException e) {
 			LOGGER.error("Could not remove document "+docId+" from index.");
@@ -305,7 +310,7 @@ public class TrpIndexer {
 		String queryString = "id:"+docId+"_"+pageNr+"*";
 		try {
 			server.deleteByQuery(queryString);
-			server.commit();
+//			server.commit();
 			server.optimize();
 		} catch (SolrServerException | IOException e) {
 			LOGGER.error("Could not remove page "+docId+" from index.");
@@ -323,7 +328,7 @@ public class TrpIndexer {
 		String queryString = "*:*";
 		try {
 			server.deleteByQuery(queryString);
-			server.commit();
+//			server.commit();
 			server.optimize();
 		} catch (SolrServerException | IOException e) {
 			LOGGER.error("Could not delete from index.");
@@ -480,9 +485,9 @@ vate SolrInputDocument createIndexDocument(TrpDocMetadata md){
 			PcGtsType pc = new PcGtsType();
 			try {
 				pc = PageXmlUtils.unmarshal(p.getCurrentTranscript().getUrl());
-			} catch (JAXBException e) {
+			} catch (Exception e) {
 				LOGGER.error("XML Unmarshal failed for Doc "+p.getDocId() +" page "+p.getPageNr());
-				e.printStackTrace();
+				throw e;
 			}
 			
 			String fullTextFromWords ="";
@@ -506,7 +511,6 @@ vate SolrInputDocument createIndexDocument(TrpDocMetadata md){
 						}						
 					}				
 				}
-				
 			}
 			
 			doc.addField(SearchField.Fulltextfromlines.getFieldName(), PageXmlUtils.getFulltextFromLines(pc));
