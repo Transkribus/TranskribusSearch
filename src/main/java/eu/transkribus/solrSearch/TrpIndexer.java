@@ -46,7 +46,7 @@ public class TrpIndexer {
 	private static SolrClient server;
 	private static final Logger LOGGER = LoggerFactory.getLogger(TrpIndexer.class);
 	private static final String EMPTY_FIELD = "_EMPTY_FIELD";
-	private static final String SPECIAL_SYMBOLS = "[@©«»„“”°]";
+	private static final String SPECIAL_SYMBOLS = "[@©«»„“”°■♦¶]";
 	
 	/**
 	 * Constructor
@@ -504,7 +504,7 @@ vate SolrInputDocument createIndexDocument(TrpDocMetadata md){
 					if(ttl.getCustomTagList() != null){
 						if(!ttl.getCustomTagList().getIndexedTagNames().isEmpty()){
 							for(CustomTag tag : ttl.getCustomTagList().getTags()){
-								if(tag.getTagName() != "readingOrder"){
+								if(!(tag.getTagName() == "readingOrder" || tag.getTagName() == "textStyle" )){
 									tags.add(tag);									
 								}
 							}							
@@ -520,7 +520,7 @@ vate SolrInputDocument createIndexDocument(TrpDocMetadata md){
 			
 			ArrayList<TrpWordType> words = getWordList(pc);
 			for(TrpWordType word : words){
-				if(!word.getUnicodeText().trim().replaceAll("\\p{Punct}", "").isEmpty()){
+				if(!word.getUnicodeText().trim().replaceAll("\\p{Punct}", "").replaceAll(SPECIAL_SYMBOLS, "").isEmpty()){
 					String wordAndCoords = word.getUnicodeText().replaceAll("\\p{Punct}", "")
 											+ ":"+word.getLine().getRegion().getId()+"/"
 											+ word.getLine().getId()+"/"
