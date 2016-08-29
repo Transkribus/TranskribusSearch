@@ -3,6 +3,7 @@ package eu.transkribus.solrSearch;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -15,6 +16,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import eu.transkribus.core.model.beans.enums.SearchType;
+import eu.transkribus.core.model.beans.searchresult.FulltextSearchResult;
+import eu.transkribus.core.model.beans.searchresult.PageHit;
+import eu.transkribus.solrSearch.util.SearchUtils;
 
 public class TrpSearcher {
 
@@ -49,7 +53,7 @@ public class TrpSearcher {
 	 *            Filters by colIds
 	 * @return Solr QueryResponse
 	 */
-	public QueryResponse searchFullText(String searchText, SearchType TYPE, ArrayList<Integer> colIds) {
+	public FulltextSearchResult searchFullText(String searchText, SearchType TYPE, ArrayList<Integer> colIds) {
 		return searchFullText(searchText, TYPE, colIds, null);
 	}
 
@@ -63,7 +67,7 @@ public class TrpSearcher {
 	 * @param filters
 	 * @return
 	 */
-	public QueryResponse searchFullText(String searchText, SearchType TYPE, ArrayList<Integer> colIds,
+	public FulltextSearchResult searchFullText(String searchText, SearchType TYPE, ArrayList<Integer> colIds,
 			ArrayList<String> filters) {
 
 		QueryResponse result = new QueryResponse();
@@ -75,9 +79,8 @@ public class TrpSearcher {
 		} catch (SolrServerException | IOException e) {
 
 			e.printStackTrace();
-		}
-
-		return result;
+		}		
+		return SearchUtils.generateSearchResult(result, TYPE);
 	}
 
 	public SolrQuery buildQuery(String searchText, SearchType TYPE, ArrayList<Integer> colIds,
@@ -162,16 +165,8 @@ public class TrpSearcher {
 		return solr;
 	}
 
-	// find tagged stuff
-	private static final Pattern TAG_REGEX = Pattern.compile("<em>(.+?)</em>");
 
-	public static List<String> getTagValues(final String str) {
-		final List<String> tagValues = new ArrayList<String>();
-		final Matcher matcher = TAG_REGEX.matcher(str);
-		while (matcher.find()) {
-			tagValues.add(matcher.group(1));
-		}
-		return tagValues;
-	}
+	
+
 
 }
