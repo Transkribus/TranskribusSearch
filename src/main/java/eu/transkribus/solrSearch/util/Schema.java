@@ -24,6 +24,7 @@ public class Schema {
 	public static final String TYPE_FIELD_NAME = "type";
 	public static final String DOC_ID_FIELD_NAME = "docId";
 	public static final String COL_ID_FIELD_NAME = "collectionId";
+	public static final String COL_NAME_FIELD_NAME = "collectionName";
 	public static final String TITLE_FIELD_NAME = "title";
 	public static final String AUTHOR_FIELD_NAME = "author";
 	public static final String UL_TIME_FIELD_NAME = "uploadTime";
@@ -63,6 +64,7 @@ public class Schema {
 		Type(TYPE_FIELD_NAME, "Type", FieldType.STRING),
 		DocId(DOC_ID_FIELD_NAME, "Doc-ID", FieldType.INT),
 		ColId(COL_ID_FIELD_NAME, "Collection-ID", FieldType.INT),
+		ColName(COL_NAME_FIELD_NAME, "Collection-Name", FieldType.STRING),
 		Title(TITLE_FIELD_NAME, "Title", FieldType.TEXT),
 		Author(AUTHOR_FIELD_NAME, "Author", FieldType.TEXT),
 		UploadTime(UL_TIME_FIELD_NAME, "Uploaded", FieldType.TDATE),

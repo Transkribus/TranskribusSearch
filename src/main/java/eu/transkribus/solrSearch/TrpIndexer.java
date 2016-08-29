@@ -475,10 +475,19 @@ vate SolrInputDocument createIndexDocument(TrpDocMetadata md){
 						
 			List<TrpCollection> colls = md.getColList();
 			ArrayList<Integer> colIds = new ArrayList<Integer>();
+			ArrayList<String> colNames = new ArrayList<>();
 			for(TrpCollection c : colls){
 				colIds.add(c.getColId());
+				colNames.add(c.getColName());
 			}
 			doc.addField(SearchField.ColId.getFieldName(), colIds);	
+			doc.addField(SearchField.ColName.getFieldName(), colNames);	
+			
+			
+			
+
+			
+			
 					
 			
 			PcGtsType pc = new PcGtsType();
