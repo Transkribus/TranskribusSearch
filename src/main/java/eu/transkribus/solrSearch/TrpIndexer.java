@@ -462,6 +462,7 @@ vate SolrInputDocument createIndexDocument(TrpDocMetadata md){
 			doc.addField(SearchField.Id.getFieldName(), p.getDocId() + "_" + p.getPageNr());
 			doc.addField(SearchField.DocId.getFieldName(), p.getDocId());
 			doc.addField(SearchField.Title.getFieldName(), md.getTitle());
+			doc.addField(SearchField.ScriptType.getFieldName(), md.getScriptType().getStr());
 			doc.addField(SearchField.Author.getFieldName(), md.getAuthor());
 			doc.addField(SearchField.Genre.getFieldName(), md.getGenre());
 			//doc.addField(SearchField.Type.getFieldName(), "p");			
@@ -471,16 +472,14 @@ vate SolrInputDocument createIndexDocument(TrpDocMetadata md){
 				doc.addField(SearchField.Uploader.getFieldName(), p.getCurrentTranscript().getUserName());
 			doc.addField(SearchField.UploadTime.getFieldName(), p.getCurrentTranscript().getTime());
 			doc.addField(SearchField.PageUrl.getFieldName(), p.getUrl().toString());
-			
-			
+						
 			List<TrpCollection> colls = md.getColList();
 			ArrayList<Integer> colIds = new ArrayList<Integer>();
 			for(TrpCollection c : colls){
 				colIds.add(c.getColId());
 			}
 			doc.addField(SearchField.ColId.getFieldName(), colIds);	
-			
-			
+					
 			
 			PcGtsType pc = new PcGtsType();
 			try {
@@ -516,7 +515,6 @@ vate SolrInputDocument createIndexDocument(TrpDocMetadata md){
 			doc.addField(SearchField.Fulltextfromlines.getFieldName(), PageXmlUtils.getFulltextFromLines(pc));
 			
 			doc.addField(SearchField.Fulltextfromwords.getFieldName(), fullTextFromWords);		
-
 			
 			ArrayList<TrpWordType> words = getWordList(pc);
 			for(TrpWordType word : words){

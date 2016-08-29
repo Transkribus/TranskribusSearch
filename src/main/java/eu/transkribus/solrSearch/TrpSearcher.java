@@ -53,8 +53,8 @@ public class TrpSearcher {
 	 *            Filters by colIds
 	 * @return Solr QueryResponse
 	 */
-	public FulltextSearchResult searchFullText(String searchText, SearchType TYPE, ArrayList<Integer> colIds) {
-		return searchFullText(searchText, TYPE, colIds, null);
+	public FulltextSearchResult searchFullText(String searchText, SearchType TYPE, ArrayList<Integer> colIds, int start, int rows) {
+		return searchFullText(searchText, TYPE, colIds, null, start, rows);
 	}
 
 	/**
@@ -68,12 +68,14 @@ public class TrpSearcher {
 	 * @return
 	 */
 	public FulltextSearchResult searchFullText(String searchText, SearchType TYPE, ArrayList<Integer> colIds,
-			ArrayList<String> filters) {
+			ArrayList<String> filters, int start, int rows) {
 
 		QueryResponse result = new QueryResponse();
 
-		SolrQuery query = buildQuery(searchText, TYPE, colIds, filters);
+		SolrQuery query = buildQuery(searchText, TYPE, colIds, filters, start, rows);
 
+		LOGGER.debug("Query: " + query.toString());
+		
 		try {
 			result = server.query(query);
 		} catch (SolrServerException | IOException e) {
@@ -84,7 +86,7 @@ public class TrpSearcher {
 	}
 
 	public SolrQuery buildQuery(String searchText, SearchType TYPE, ArrayList<Integer> colIds,
-			ArrayList<String> filters) {
+			ArrayList<String> filters, int start, int rows) {
 		SolrQuery query = new SolrQuery();
 
 		String filterString = "";
@@ -134,6 +136,9 @@ public class TrpSearcher {
 		query.set("q", queryString);
 		query.set("fq", filterString);
 
+		query.setStart(start);
+		query.setRows(rows);
+		
 		boolean highlighting = true;
 		// for(String key : searchMap.keySet()){
 		// if(key.contains("fullText")){
@@ -148,8 +153,9 @@ public class TrpSearcher {
 		}
 
 		query.setFacet(true);
-		query.addFacetField("author");
-		query.addFacetField("collectionId");
+		query.setFacetMinCount(1);
+		query.addFacetField("f_author");
+		query.addFacetField("uploader");
 
 		// System.out.println(queryString);
 

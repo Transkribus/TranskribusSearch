@@ -29,7 +29,7 @@ public class Schema {
 	public static final String UL_TIME_FIELD_NAME = "uploadTime";
 	public static final String GENRE_FIELD_NAME = "genre";
 	public static final String WRITER_FIELD_NAME = "writer";
-	public static final String SCRIPT_TYPE_FIELD_NAME = "scriptType";
+	public static final String SCRIPT_TYPE = "scriptType";
 	public static final String UPLOADER_FIELD_NAME = "uploader";
 	public static final String NR_OF_PAGES_FIELD_NAME = "nrOfPages";
 	public static final String DESC_FIELD_NAME = "description";
@@ -68,7 +68,7 @@ public class Schema {
 		UploadTime(UL_TIME_FIELD_NAME, "Uploaded", FieldType.TDATE),
 		Genre(GENRE_FIELD_NAME, "Genre", FieldType.TEXT),
 		Writer(WRITER_FIELD_NAME, "Writer", FieldType.TEXT),
-		ScriptType(SCRIPT_TYPE_FIELD_NAME, "Script Type", FieldType.STRING),
+		ScriptType(SCRIPT_TYPE, "Script Type", FieldType.STRING),
 		Uploader(UPLOADER_FIELD_NAME, "Uploader", FieldType.TEXT),
 		NrOfPages(NR_OF_PAGES_FIELD_NAME, "Pages", FieldType.INT),
 		Description(DESC_FIELD_NAME, "Description", FieldType.TEXT),
