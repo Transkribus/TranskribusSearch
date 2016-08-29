@@ -86,10 +86,7 @@ public class SearchUtils {
 						
 						List<Object> wordCoordList = (ArrayList<Object>) result.getFieldValues("wordCoords");
 						
-						if(wordCoordList == null) {
-							logger.debug("hlWord = " + hlWord + " | NO Word coordinates");
-//							logger.debug(result.toString());
-						} else {
+						if(wordCoordList != null) {
 							for(Object wordCoord : wordCoordList){
 								if(wordCoord.toString().split(":")[0].replaceAll(SPECIAL_SYMBOLS, "").equals(hlWord) && !wordCoords.contains(wordCoord.toString())){
 									wordCoords.add(wordCoord.toString());	

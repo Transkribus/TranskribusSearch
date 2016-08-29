@@ -153,8 +153,9 @@ public class TrpSearcher {
 		}
 
 		query.setFacet(true);
-		query.addFacetField("author");
-		query.addFacetField("collectionId");
+		query.setFacetMinCount(1);
+		query.addFacetField("f_author");
+		query.addFacetField("uploader");
 
 		// System.out.println(queryString);
 
