@@ -74,6 +74,8 @@ public class TrpSearcher {
 
 		SolrQuery query = buildQuery(searchText, TYPE, colIds, filters);
 
+		LOGGER.debug("Query: " + query.toString());
+		
 		try {
 			result = server.query(query);
 		} catch (SolrServerException | IOException e) {

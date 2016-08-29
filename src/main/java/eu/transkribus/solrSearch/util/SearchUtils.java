@@ -8,6 +8,8 @@ import java.util.regex.Pattern;
 
 import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.common.SolrDocument;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import eu.transkribus.core.model.beans.enums.SearchType;
 import eu.transkribus.core.model.beans.searchresult.FulltextSearchResult;
@@ -15,6 +17,7 @@ import eu.transkribus.core.model.beans.searchresult.PageHit;
 
 public class SearchUtils {
 
+	private static final Logger logger = LoggerFactory.getLogger(SearchUtils.class);
 	// find tagged stuff
 	private static final Pattern TAG_REGEX = Pattern.compile("<em>(.+?)</em>"); //Solr tags for highlighting
 	private static final String SPECIAL_SYMBOLS = "[@©«»„“”°■♦¶]";
@@ -80,9 +83,17 @@ public class SearchUtils {
 					ArrayList<String> wordCoords = new ArrayList<>();
 					
 					for(String hlWord: hlWords){
-						for(Object wordCoord : (ArrayList<Object>) result.getFieldValues("wordCoords")){
-							if(wordCoord.toString().split(":")[0].replaceAll(SPECIAL_SYMBOLS, "").equals(hlWord) && !wordCoords.contains(wordCoord.toString())){
-								wordCoords.add(wordCoord.toString());	
+						
+						List<Object> wordCoordList = (ArrayList<Object>) result.getFieldValues("wordCoords");
+						
+						if(wordCoordList == null) {
+							logger.debug("hlWord = " + hlWord + " | NO Word coordinates");
+//							logger.debug(result.toString());
+						} else {
+							for(Object wordCoord : wordCoordList){
+								if(wordCoord.toString().split(":")[0].replaceAll(SPECIAL_SYMBOLS, "").equals(hlWord) && !wordCoords.contains(wordCoord.toString())){
+									wordCoords.add(wordCoord.toString());	
+								}
 							}
 						}
 					}
