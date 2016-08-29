@@ -131,7 +131,7 @@ public class TrpSearcher {
 
 		}
 
-		query.set("q", queryString);
+		//query.set("q", queryString);
 
 		query.set("q", queryString);
 		query.set("fq", filterString);
@@ -140,22 +140,18 @@ public class TrpSearcher {
 		query.setRows(rows);
 		
 		boolean highlighting = true;
-		// for(String key : searchMap.keySet()){
-		// if(key.contains("fullText")){
-		// highlighting = true;
-		// }
-		// }
 
 		if (highlighting) {
 			query.set("hl", "on");
 			query.set("hl.fl", "fullText*");
 			query.set("hl.snippets", "20");
 		}
-
+		
 		query.setFacet(true);
 		query.setFacetMinCount(1);
 		query.addFacetField("f_author");
 		query.addFacetField("uploader");
+		query.addFacetField("scriptType");
 
 		// System.out.println(queryString);
 
