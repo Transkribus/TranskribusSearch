@@ -1,17 +1,21 @@
 package eu.transkribus.solrSearch.util;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.solr.client.solrj.response.FacetField;
+import org.apache.solr.client.solrj.response.FacetField.Count;
 import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.common.SolrDocument;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import eu.transkribus.core.model.beans.enums.SearchType;
+import eu.transkribus.core.model.beans.searchresult.Facet;
 import eu.transkribus.core.model.beans.searchresult.FulltextSearchResult;
 import eu.transkribus.core.model.beans.searchresult.PageHit;
 
@@ -42,7 +46,24 @@ public class SearchUtils {
 		FulltextSearchResult results = new FulltextSearchResult();			
 		results.setParams(response.getHeader().get("params").toString());		
 		results.setNumResults(response.getResults().getNumFound());	
-		results.setPageHits(generatePageHits(response, TYPE));				
+		results.setPageHits(generatePageHits(response, TYPE));
+		
+		ArrayList<Facet> facets = new ArrayList<Facet>();
+		
+		for(FacetField facetField : response.getFacetFields()){
+			Facet facet = new Facet();
+			facet.setName(facetField.getName());
+			
+			Map<String,Long> fMap = new HashMap<String,Long>();
+			
+			for(Count f : facetField.getValues()){
+				fMap.put(f.getName().toString(), f.getCount());
+			}
+			facet.setFacetMap(fMap);
+			facets.add(facet);
+		}
+		results.setFacets(facets);
+		
 
 		return results;
 	}
