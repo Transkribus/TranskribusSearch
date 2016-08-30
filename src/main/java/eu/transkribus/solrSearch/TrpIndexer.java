@@ -25,6 +25,7 @@ import eu.transkribus.core.model.beans.TrpDoc;
 import eu.transkribus.core.model.beans.TrpDocMetadata;
 import eu.transkribus.core.model.beans.TrpPage;
 import eu.transkribus.core.model.beans.customtags.CustomTag;
+import eu.transkribus.core.model.beans.enums.ScriptType;
 import eu.transkribus.core.model.beans.pagecontent.PcGtsType;
 import eu.transkribus.core.model.beans.pagecontent.TextLineType;
 import eu.transkribus.core.model.beans.pagecontent.TextRegionType;
@@ -187,6 +188,7 @@ public class TrpIndexer {
 				//indexText(p);
 			}
 		} catch (Exception e) {
+			LOGGER.debug(e.getMessage(), e);
 			success = false;
 		}
 		return success;
@@ -462,7 +464,10 @@ vate SolrInputDocument createIndexDocument(TrpDocMetadata md){
 			doc.addField(SearchField.Id.getFieldName(), p.getDocId() + "_" + p.getPageNr());
 			doc.addField(SearchField.DocId.getFieldName(), p.getDocId());
 			doc.addField(SearchField.Title.getFieldName(), md.getTitle());
-			doc.addField(SearchField.ScriptType.getFieldName(), md.getScriptType().getStr());
+			ScriptType st = md.getScriptType();
+			if(st != null) {
+				doc.addField(SearchField.ScriptType.getFieldName(), st.getStr());
+			}
 			doc.addField(SearchField.Author.getFieldName(), md.getAuthor());
 			doc.addField(SearchField.Genre.getFieldName(), md.getGenre());
 			//doc.addField(SearchField.Type.getFieldName(), "p");			
