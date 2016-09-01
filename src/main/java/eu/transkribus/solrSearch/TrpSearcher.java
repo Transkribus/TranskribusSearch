@@ -67,8 +67,8 @@ public class TrpSearcher {
 	 * @param filters
 	 * @return
 	 */
-	public FulltextSearchResult searchFullText(String searchText, SearchType TYPE, ArrayList<Integer> colIds,
-			ArrayList<String> filters, int start, int rows) {
+	public FulltextSearchResult searchFullText(String searchText, SearchType TYPE, List<Integer> colIds,
+			List<String> filters, int start, int rows) {
 
 		QueryResponse result = new QueryResponse();
 
@@ -85,8 +85,8 @@ public class TrpSearcher {
 		return SearchUtils.generateSearchResult(result, TYPE);
 	}
 
-	public SolrQuery buildQuery(String searchText, SearchType TYPE, ArrayList<Integer> colIds,
-			ArrayList<String> filters, int start, int rows) {
+	public SolrQuery buildQuery(String searchText, SearchType TYPE, List<Integer> colIds,
+			List<String> filters, int start, int rows) {
 		SolrQuery query = new SolrQuery();
 
 		String filterString = "";
