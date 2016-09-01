@@ -93,6 +93,12 @@ public class SearchUtils {
 					hit.setDocId(Long.parseLong(result.getFieldValue("docId").toString()));
 					hit.setPageUrl(result.getFieldValue("pageUrl").toString());
 					
+					ArrayList<Integer> collIds = new ArrayList<>();
+					for(Object o : result.getFieldValues("collectionId")){
+						collIds.add(Integer.parseInt(o.toString()));
+					}
+					hit.setCollectionIds(collIds);
+					
 					ArrayList<String> hlWords = new ArrayList<>();
 					
 					for (String hl : hit.getHighlights()){
