@@ -104,7 +104,7 @@ public class TrpSearcher {
 
 		if (filters != null) {
 			for (String filter : filters) {
-				filterString += "AND " + filter + " ";
+				filterString += "OR " + filter + " ";
 			}
 
 		}
