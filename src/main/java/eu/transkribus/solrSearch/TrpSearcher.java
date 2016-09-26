@@ -132,15 +132,19 @@ public class TrpSearcher {
 		}
 
 		if (filters != null) {
-		for (String filter : filters) {
-			queryString += " AND " + filter;
-		}
+			for (String filter : filters) {
+				queryString += " AND " + filter;
+			}
 
-	}
+		}
+		if(filterString != null){
+			queryString += " AND ("+filterString+")";
+		}
+		
 		
 
 		query.set("q", queryString);
-		query.set("fq", filterString);
+		//query.set("fq", filterString);
 
 		query.setStart(start);
 		query.setRows(rows);
