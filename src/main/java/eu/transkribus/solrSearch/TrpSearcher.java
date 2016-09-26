@@ -89,16 +89,16 @@ public class TrpSearcher {
 			List<String> filters, int start, int rows) {
 		SolrQuery query = new SolrQuery();
 
-		String filterString = "";
+		String userRightsFilter = "";
 		int counter = 0;
 		if (colIds == null) {
-			filterString = "collectionId:*";
+			userRightsFilter = "collectionId:*";
 		} else {
 			for (int i : colIds) {
-				filterString += "collectionId:" + i + " ";
+				userRightsFilter += "collectionId:" + i + " ";
 				counter++;
 				if (counter < colIds.size())
-					filterString += "OR ";
+					userRightsFilter += "OR ";
 			}
 		}
 
@@ -137,8 +137,8 @@ public class TrpSearcher {
 			}
 
 		}
-		if(filterString != null){
-			queryString += " AND ("+filterString+")";
+		if(userRightsFilter != null){
+			queryString += " AND ("+userRightsFilter+")";
 		}
 		
 		
@@ -167,7 +167,7 @@ public class TrpSearcher {
 
 		// System.out.println(queryString);
 
-		LOGGER.info("q: " + queryString + ", fq: " + filterString);
+		LOGGER.info("q: " + queryString + ", fq: " + userRightsFilter);
 		return query;
 	}
 
