@@ -102,15 +102,15 @@ public class TrpSearcher {
 			}
 		}
 
-		if (filters != null) {
-			for (String filter : filters) {
-				filterString += "AND " + filter + " ";
-			}
-
-		}
+//		if (filters != null) {
+//			for (String filter : filters) {
+//				filterString += "AND " + filter + " ";
+//			}
+//
+//		}
 
 		String queryString = "";
-		searchText = searchText.replace(" ", "\\ ");
+		searchText = searchText.trim().replace(" ", "\\ ");
 
 		switch (TYPE) {
 		case Words:
@@ -131,7 +131,13 @@ public class TrpSearcher {
 
 		}
 
-		//query.set("q", queryString);
+		if (filters != null) {
+		for (String filter : filters) {
+			queryString += " AND " + filter;
+		}
+
+	}
+		
 
 		query.set("q", queryString);
 		query.set("fq", filterString);
