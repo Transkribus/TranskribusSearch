@@ -92,7 +92,8 @@ public class TrpSearcher {
 		String userRightsFilter = "";
 		int counter = 0;
 		if (colIds == null) {
-			userRightsFilter = "collectionId:*";
+//			userRightsFilter = "collectionId:*";
+			userRightsFilter = "";
 		} else {
 			for (int i : colIds) {
 				userRightsFilter += "collectionId:" + i + " ";
@@ -131,13 +132,14 @@ public class TrpSearcher {
 
 		}
 
+				
 		if (filters != null) {
 			for (String filter : filters) {
 				queryString += " AND " + filter;
 			}
 
 		}
-		if(userRightsFilter != null){
+		if(!userRightsFilter.equals("")){
 			queryString += " AND ("+userRightsFilter+")";
 		}
 		
