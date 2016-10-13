@@ -237,13 +237,8 @@ public class TrpIndexer {
 	}
 	*/
 	
-	@Deprecated
-	public boolean updatePageIndex(TrpPage p, TrpDoc trpDoc){
-		return this.updatePageIndex(p, trpDoc.getMd());
-	}
-	
 	//Update single page index
-	public boolean updatePageIndex(TrpPage p, TrpDocMetadata trpDocMd){
+	public boolean updatePageIndex(TrpPage p, TrpDocMetadata trpDocMd, boolean doOptimize){
 		boolean success = false;
 		if(isIndexed(p)){
 			removeIndex(p);
@@ -258,15 +253,15 @@ public class TrpIndexer {
 		} catch (JAXBException e) {
 			success = false;
 		}
-		try {
-//			server.commit();
-			server.optimize();
-			LOGGER.info("Added page to solr server.");
-		} catch (SolrServerException | IOException e) {
-			LOGGER.error("Could not commit page to solr server.");
-			e.printStackTrace();
+		if(doOptimize) {
+			try {
+				server.optimize();
+				LOGGER.info("Added page to solr server.");
+			} catch (SolrServerException | IOException e) {
+				LOGGER.error("Could not commit page to solr server.");
+				e.printStackTrace();
+			}
 		}
-		
 		return success;
 	}
 	
