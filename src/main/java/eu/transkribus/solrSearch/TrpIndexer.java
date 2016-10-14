@@ -238,7 +238,7 @@ public class TrpIndexer {
 	*/
 	
 	//Update single page index
-	public boolean updatePageIndex(TrpPage p, TrpDocMetadata trpDocMd, boolean doOptimize){
+	public boolean updatePageIndex(TrpPage p, TrpDocMetadata trpDocMd){
 		boolean success = false;
 		if(isIndexed(p)){
 			removeIndex(p);
@@ -253,15 +253,7 @@ public class TrpIndexer {
 		} catch (JAXBException e) {
 			success = false;
 		}
-		if(doOptimize) {
-			try {
-				server.optimize();
-				LOGGER.info("Added page to solr server.");
-			} catch (SolrServerException | IOException e) {
-				LOGGER.error("Could not commit page to solr server.");
-				e.printStackTrace();
-			}
-		}
+		
 		return success;
 	}
 	
@@ -283,7 +275,7 @@ public class TrpIndexer {
 		try {
 			server.deleteByQuery(queryString);
 //			server.commit();
-			server.optimize();
+//			server.optimize();
 		} catch (SolrServerException | IOException e) {
 			LOGGER.error("Could not remove document "+docId+" from index.");
 			e.printStackTrace();
@@ -308,7 +300,7 @@ public class TrpIndexer {
 		try {
 			server.deleteByQuery(queryString);
 //			server.commit();
-			server.optimize();
+//			server.optimize();
 		} catch (SolrServerException | IOException e) {
 			LOGGER.error("Could not remove page "+docId+" from index.");
 			e.printStackTrace();
