@@ -92,6 +92,11 @@ public class SearchUtils {
 					hit.setPageNr(Long.parseLong(result.getFieldValue("pageNr").toString()));
 					hit.setDocId(Long.parseLong(result.getFieldValue("docId").toString()));
 					hit.setPageUrl(result.getFieldValue("pageUrl").toString());
+					if(result.getFieldValue("title") != null){
+						hit.setDocTitle(result.getFieldValue("title").toString());
+					}else{
+						hit.setDocTitle("BAD_TITLE");
+					}
 					
 					ArrayList<Integer> collIds = new ArrayList<>();
 					for(Object o : result.getFieldValues("collectionId")){
