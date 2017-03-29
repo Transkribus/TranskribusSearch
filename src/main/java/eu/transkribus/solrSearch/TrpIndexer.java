@@ -107,12 +107,12 @@ public class TrpIndexer {
 		}
 	}	
 	
-	private void commitToIndex() {
+	public void commitToIndex() {
 		try {
 			LOGGER.info("Commiting...");
 			server.commit();
 		} catch (SolrServerException | IOException e) {
-			LOGGER.error("Could not commit doc MD to solr server.", e);
+			LOGGER.error("Could not commit to solr server.", e);
 		}
 	}
 	
@@ -620,5 +620,5 @@ vate SolrInputDocument createIndexDocument(TrpDocMetadata md){
 		
 		return words;
 	}
-	
+
 }

@@ -101,8 +101,11 @@ public class SearchUtils {
 					
 					ArrayList<Integer> collIds = new ArrayList<>();
 					Collection<Object> collIdObjects = result.getFieldValues("collectionId");
-					//FIXME this is null when searching for "test" on test server!?
-					logger.debug("collIdObjects = " + collIdObjects);
+					//there seem to be orphaned documents, i.e. without collection, in the index.
+					//in this case, skip here and do not index
+					if(collIdObjects == null || collIdObjects.isEmpty()) {
+						continue;
+					}
 					for(Object o : collIdObjects){
 						collIds.add(Integer.parseInt(o.toString()));
 					}
