@@ -1,6 +1,7 @@
 package eu.transkribus.solrSearch.util;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -99,7 +100,10 @@ public class SearchUtils {
 					}
 					
 					ArrayList<Integer> collIds = new ArrayList<>();
-					for(Object o : result.getFieldValues("collectionId")){
+					Collection<Object> collIdObjects = result.getFieldValues("collectionId");
+					//FIXME this is null when searching for "test" on test server!?
+					logger.debug("collIdObjects = " + collIdObjects);
+					for(Object o : collIdObjects){
 						collIds.add(Integer.parseInt(o.toString()));
 					}
 					hit.setCollectionIds(collIds);
