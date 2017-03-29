@@ -239,20 +239,26 @@ public class TrpIndexer {
 	
 	//Update single page index
 	public boolean updatePageIndex(TrpPage p, TrpDocMetadata trpDocMd){
-		boolean success = false;
+		//set success to true as default
+		boolean success = true;
 		if(isIndexed(p)){
 			removeIndex(p);
 		}		
 		
+		SolrInputDocument doc;
 		try {
-			SolrInputDocument doc = createIndexDocument(p, trpDocMd);
-			if(doc != null){
-				success = submitDocToSolr(doc);
-				//indexText(p);
-			}
-		} catch (JAXBException e) {
-			success = false;
+			doc = createIndexDocument(p, trpDocMd);
+		} catch (Exception e) {
+			//shit happens
+			doc = null;
 		}
+		
+		//if shit happened, ignore this page silently
+		if(doc != null){
+			//only set success to false if the actual indexing fails, not if the page XML is faulty
+			success = submitDocToSolr(doc);
+		}
+		
 		
 		return success;
 	}
@@ -486,7 +492,7 @@ vate SolrInputDocument createIndexDocument(TrpDocMetadata md){
 			try {
 				pc = PageXmlUtils.unmarshal(p.getCurrentTranscript().getUrl());
 			} catch (Exception e) {
-				LOGGER.error("XML Unmarshal failed for Doc "+p.getDocId() +" page "+p.getPageNr());
+				LOGGER.error("Faulty XML: Doc "+p.getDocId() +" page "+p.getPageNr());
 				throw e;
 			}
 			
