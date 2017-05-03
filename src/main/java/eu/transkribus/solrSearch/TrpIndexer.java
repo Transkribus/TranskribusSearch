@@ -109,7 +109,7 @@ public class TrpIndexer {
 	
 	public void commitToIndex() {
 		try {
-			LOGGER.info("Commiting...");
+			LOGGER.info("Committing...");
 			server.commit();
 		} catch (SolrServerException | IOException e) {
 			LOGGER.error("Could not commit to solr server.", e);
