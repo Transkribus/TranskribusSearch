@@ -3,9 +3,6 @@ package eu.transkribus.solrSearch;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import org.apache.solr.client.solrj.SolrClient;
 import org.apache.solr.client.solrj.SolrQuery;
@@ -17,7 +14,6 @@ import org.slf4j.LoggerFactory;
 
 import eu.transkribus.core.model.beans.enums.SearchType;
 import eu.transkribus.core.model.beans.searchresult.FulltextSearchResult;
-import eu.transkribus.core.model.beans.searchresult.PageHit;
 import eu.transkribus.solrSearch.util.SearchUtils;
 
 public class TrpSearcher {

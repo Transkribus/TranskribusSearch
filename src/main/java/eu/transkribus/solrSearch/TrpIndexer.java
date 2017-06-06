@@ -24,6 +24,7 @@ import eu.transkribus.core.model.beans.TrpCollection;
 import eu.transkribus.core.model.beans.TrpDoc;
 import eu.transkribus.core.model.beans.TrpDocMetadata;
 import eu.transkribus.core.model.beans.TrpPage;
+import eu.transkribus.core.model.beans.TrpTranscriptMetadata;
 import eu.transkribus.core.model.beans.customtags.CustomTag;
 import eu.transkribus.core.model.beans.enums.ScriptType;
 import eu.transkribus.core.model.beans.pagecontent.PcGtsType;
@@ -249,6 +250,14 @@ public class TrpIndexer {
 		try {
 			doc = createIndexDocument(p, trpDocMd);
 		} catch (Exception e) {
+			TrpTranscriptMetadata tmd = null;
+			if(p.getTranscripts().isEmpty()) {
+				LOGGER.error("Transcript list is empty here!!");
+			} else {
+				tmd = p.getCurrentTranscript();
+			}
+			LOGGER.error("Could not create index document: docId = " + trpDocMd.getDocId() 
+				+ " | pageId = " + p.getPageId() + " | tmd Id = "  + (tmd == null ? null : tmd.getTsId()), e);
 			//shit happens
 			doc = null;
 		}
@@ -345,9 +354,8 @@ public class TrpIndexer {
 		boolean success = true;
 		try{
 			server.add(doc);
-		} catch (SolrServerException e) {
-			success = false;
-		} catch (IOException e) {
+		} catch (Exception e) {
+			LOGGER.error("Could not index doc!", e);
 			success = false;
 		}
 		return success;
