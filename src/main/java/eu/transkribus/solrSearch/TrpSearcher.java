@@ -21,6 +21,7 @@ public class TrpSearcher {
 	private final String serverUrl;
 	private static SolrClient server;
 	private static final Logger LOGGER = LoggerFactory.getLogger(TrpSearcher.class);
+	private static final String BAD_SYMBOLS = "{,},(,[,+,-,:,=,],),#";
 
 	// public final static String WORDS = "Words";
 	// public final static String WORDSLC = "WordsLc";
@@ -108,6 +109,10 @@ public class TrpSearcher {
 
 		String queryString = "";
 		searchText = searchText.trim().replace(" ", "\\ ");
+		
+		for(String c : BAD_SYMBOLS.split(",")){
+			searchText = searchText.replaceAll("\\"+c, "");
+		}
 
 		switch (TYPE) {
 		case Words:
