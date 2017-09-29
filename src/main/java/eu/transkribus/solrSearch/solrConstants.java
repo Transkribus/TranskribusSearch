@@ -7,11 +7,12 @@ import java.io.InputStream;
 import java.util.InvalidPropertiesFormatException;
 import java.util.Properties;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class solrConstants {
 	
-	private static final Logger LOGGER = Logger.getLogger(solrConstants.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(solrConstants.class);
 	private static final String PROPERTIES_FILENAME = "solr.properties";
 	private static Properties props = null;
 	
@@ -29,7 +30,7 @@ public class solrConstants {
 
 		} 	
 		catch (InvalidPropertiesFormatException e) {
-			LOGGER.fatal("Invalid properties file: "+ PROPERTIES_FILENAME +"\n"+e.getMessage());
+			LOGGER.error("Invalid properties file: "+ PROPERTIES_FILENAME +"\n"+e.getMessage());
 			e.printStackTrace();
 		}		
 		catch (FileNotFoundException e) {	
@@ -37,7 +38,7 @@ public class solrConstants {
 			e.printStackTrace();
 		}
 		catch (IOException e) {
-			LOGGER.fatal("Could not load: "+ PROPERTIES_FILENAME +"\n"+e.getMessage());
+			LOGGER.error("Could not load: "+ PROPERTIES_FILENAME +"\n"+e.getMessage());
 			e.printStackTrace();
 		}
 	}

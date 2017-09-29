@@ -112,6 +112,7 @@ public class TrpIndexer {
 		try {
 			LOGGER.info("Committing...");
 			server.commit();
+			LOGGER.info("Commit done.");
 		} catch (SolrServerException | IOException e) {
 			LOGGER.error("Could not commit to solr server.", e);
 		}
@@ -246,7 +247,7 @@ public class TrpIndexer {
 			removeIndex(p);
 		}		
 		
-		SolrInputDocument doc;
+		SolrInputDocument doc = null;
 		try {
 			doc = createIndexDocument(p, trpDocMd);
 		} catch (Exception e) {
@@ -264,7 +265,10 @@ public class TrpIndexer {
 		
 		//if shit happened, ignore this page silently
 		if(doc != null){
-			//only set success to false if the actual indexing fails, not if the page XML is faulty
+			/*
+			 * only set success to false if the actual indexing fails, not if the page XML is faulty
+			 * therefore this is not in the try-block above
+			 */
 			success = submitDocToSolr(doc);
 		}
 		
@@ -488,14 +492,7 @@ vate SolrInputDocument createIndexDocument(TrpDocMetadata md){
 			}
 			doc.addField(SearchField.ColId.getFieldName(), colIds);	
 			doc.addField(SearchField.ColName.getFieldName(), colNames);	
-			
-			
-			
 
-			
-			
-					
-			
 			PcGtsType pc = new PcGtsType();
 			try {
 				pc = PageXmlUtils.unmarshal(p.getCurrentTranscript().getUrl());
@@ -543,11 +540,7 @@ vate SolrInputDocument createIndexDocument(TrpDocMetadata md){
 					doc.addField(SearchField.WordCoords.getFieldName(), wordAndCoords.replaceAll(SPECIAL_SYMBOLS, ""));
 				}
 			}
-			
-			
-			
 
-			
 			for(CustomTag tag : tags){
 				doc.addField("tags",
 						tag.getTagName().replaceAll("\\p{Punct}", "")
@@ -557,6 +550,8 @@ vate SolrInputDocument createIndexDocument(TrpDocMetadata md){
 			
 			//doc.addField("_root_", p.getDocId() + "_md");
 
+		} else {
+			LOGGER.error("Page object is null!");
 		}
 		
 		return doc;
