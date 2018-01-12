@@ -77,16 +77,25 @@ public class SearchUtils {
 		for(Object key : hlObj.keySet()){
 			PageHit hit = new PageHit();
 			
+			List<String> highlights;
 			switch(TYPE){
-			case Words: hit.setHighlights((ArrayList<String>) hlObj.get(key).get("fullTextFromWords"));
-						break;
-			case WordsLc: hit.setHighlights((ArrayList<String>) hlObj.get(key).get("fullTextFromWordsLc"));
-						break;
-			case Lines: hit.setHighlights((ArrayList<String>) hlObj.get(key).get("fullTextFromLines"));
-						break;
-			case LinesLc: hit.setHighlights((ArrayList<String>) hlObj.get(key).get("fullTextFromLinesLc"));
-						break;			
-			}			
+			case Words: 
+				highlights = hlObj.get(key).get("fullTextFromWords");
+				break;
+			case WordsLc: 
+				highlights = hlObj.get(key).get("fullTextFromWordsLc");
+				break;
+			case Lines: 
+				highlights = hlObj.get(key).get("fullTextFromLines");
+				break;
+			case LinesLc: 
+				highlights = hlObj.get(key).get("fullTextFromLinesLc");
+				break;
+			default: 
+				highlights = new ArrayList<>(0);
+				break;
+			}
+			hit.setHighlights(highlights == null ? new ArrayList<String>(0) : highlights);
 			
 			for(SolrDocument result : response.getResults()){
 				if(result.getFieldValue("id").toString().equals(key.toString())){

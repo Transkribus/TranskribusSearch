@@ -73,6 +73,10 @@ public class TrpSearcher {
 
 		LOGGER.debug("Query: " + query.toString());
 		
+		if(server == null) {
+			server = getSolrClient();
+		}
+		
 		try {
 			result = server.query(query);
 		} catch (SolrServerException | IOException e) {
