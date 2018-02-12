@@ -25,7 +25,7 @@ public class SearchUtils {
 	private static final Logger logger = LoggerFactory.getLogger(SearchUtils.class);
 	// find tagged stuff
 	private static final Pattern TAG_REGEX = Pattern.compile("<em>(.+?)</em>"); //Solr tags for highlighting
-	private static final String SPECIAL_SYMBOLS = "[@©«»„“”°■♦¶]";
+	private static final String SPECIAL_SYMBOLS = "[@Â©Â«Â»â€žâ€œâ€�Â°â– â™¦Â¶]";
 
 	public static List<String> getTagValues(final String str) {
 		List<String> tagValues = new ArrayList<String>();
@@ -95,7 +95,7 @@ public class SearchUtils {
 				highlights = new ArrayList<>(0);
 				break;
 			}
-			hit.setHighlights(highlights == null ? new ArrayList<String>(0) : highlights);
+			hit.setHighlights((highlights == null ? new ArrayList<String>(0) : highlights));
 			
 			for(SolrDocument result : response.getResults()){
 				if(result.getFieldValue("id").toString().equals(key.toString())){
