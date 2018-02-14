@@ -37,11 +37,11 @@ public class KeywordSearcher {
 	
 	
 	public KeywordSearchResult searchKeyword(String keyword, float probLow, float probHigh, List<Integer> colIds,
-			List<String> filters, int start, int rows){
+			List<String> filters, String sorting, int fuzzy, int start, int rows){
 		
 		QueryResponse response = new QueryResponse();
 
-		SolrQuery query = buildQuery(keyword, probLow, probHigh, colIds, filters, start, rows);
+		SolrQuery query = buildQuery(keyword, probLow, probHigh, colIds, filters, sorting, fuzzy, start, rows);
 		
 		
 		
@@ -72,17 +72,17 @@ public class KeywordSearcher {
 
 	private ArrayList<KeywordHit> generateKeywordHits(QueryResponse response) {
 	
-		ArrayList<KeywordHit> kwHits = new ArrayList<>();
-		
-		
-//		System.out.println(response.getResults().get(0).getChildDocuments());
-		
+		ArrayList<KeywordHit> kwHits = new ArrayList<>();	
 		
 		for(SolrDocument solrDoc: response.getResults()){
 
 			KeywordHit kwHit = new KeywordHit();
 			kwHit.setId(solrDoc.getFieldValue("id").toString());
 			kwHit.setDocTitle(solrDoc.getFieldValue("title").toString());
+			kwHit.setPageUrl(solrDoc.getFieldValue("pageUrl").toString());
+			kwHit.setTextCoords(solrDoc.getFieldValue("textCoords").toString());
+			kwHit.setPageNr((int) solrDoc.getFieldValue("pageNr"));
+			kwHit.setLineId(solrDoc.getFieldValue("lineId").toString());
 			String word = solrDoc.getChildDocuments().get(0).getFieldValue("word").toString();
 			float probability = (float) solrDoc.getChildDocuments().get(0).getFieldValue("probability");
 			kwHit.setWord(word);
@@ -95,8 +95,7 @@ public class KeywordSearcher {
 
 
 	private SolrQuery buildQuery(String keyword, float probLow, float probHigh, List<Integer> colIds,
-			List<String> filters, int start, int rows) {
-		
+			List<String> filters, String sorting, int fuzzy, int start, int rows) {		
 		
 		SolrQuery query = new SolrQuery();
 		
@@ -123,6 +122,7 @@ public class KeywordSearcher {
 		String flString = "";
 		flString += String.format(" *,[child parentFilter=type_s:parent childFilter='word:%s AND type_s:child AND probability:[%s TO %s]' ] ", keyword, probLow, probHigh);
 		
+		query.set("sort", sorting);
 		
 		query.set("fl", flString);
 		
