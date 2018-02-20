@@ -31,7 +31,7 @@ public class KeywordSearcher {
 		// properties file
 		this.serverUrl = serverUrl;
 		server = getSolrClient();
-		LOGGER.info("Instance of TrpSearcher was created.");
+		LOGGER.info("Instance of KeywordSearcher was created.");
 
 	}
 	
@@ -125,6 +125,9 @@ public class KeywordSearcher {
 		query.set("sort", sorting);
 		
 		query.set("fl", flString);
+		
+		query.setStart(start);
+		query.setRows(rows);
 		
 		return query;
 		
