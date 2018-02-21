@@ -120,9 +120,11 @@ public class KeywordSearcher {
 		
 		String customFilters = "";
 		
+		if(filters == null) filters = new ArrayList<String>();
+		
 		if(filters.size() > 0){
 			customFilters = String.join(" AND ", filters);
-			if(colIds.size() > 0){
+			if(colIds == null){
 				query.setFilterQueries(String.format("(%s) AND (%s)", userRightsFilter, customFilters));
 			}else{
 				query.setFilterQueries(customFilters);
