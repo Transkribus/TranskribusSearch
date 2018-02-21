@@ -85,6 +85,15 @@ public class KeywordSearcher {
 			kwHit.setLineId(solrDoc.getFieldValue("lineId").toString());
 			String word = solrDoc.getChildDocuments().get(0).getFieldValue("word").toString();
 			float probability = (float) solrDoc.getChildDocuments().get(0).getFieldValue("probability");
+			
+			ArrayList<String> wordOptions = new ArrayList<String>();
+			for(SolrDocument childDoc : solrDoc.getChildDocuments()){
+				String w = childDoc.getFieldValue("word").toString();
+				String p = childDoc.getFieldValue("probability").toString();
+				wordOptions.add( w+"::"+p );
+			}
+			
+			kwHit.setWordOptions(wordOptions);
 			kwHit.setWord(word);
 			kwHit.setProbability(probability);
 			kwHits.add(kwHit);
@@ -112,7 +121,14 @@ public class KeywordSearcher {
 			}
 		}
 		
-		query.setFilterQueries(userRightsFilter);
+		String customFilters = "";
+		
+		if(filters.size() > 0){
+			customFilters = String.join(" AND ", filters);
+			query.setFilterQueries(String.format("(%s) AND (%s)", userRightsFilter, customFilters));
+		}else{
+			query.setFilterQueries(userRightsFilter);
+		}		
 		
 		String queryString = "";
 		queryString += "{!parent which=type_s:parent}";
