@@ -43,8 +43,6 @@ public class KeywordSearcher {
 
 		SolrQuery query = buildQuery(keyword, probLow, probHigh, colIds, filters, sorting, fuzzy, start, rows);
 		
-		
-		
 		if(server == null) {
 			server = getSolrClient();
 		}		
@@ -63,8 +61,7 @@ public class KeywordSearcher {
 		KeywordSearchResult result = new KeywordSearchResult();
 		result.setParams(response.getHeader().get("params").toString());		
 		result.setNumResults(response.getResults().getNumFound());	
-		result.setKeywordHits(generateKeywordHits(response));
-		
+		result.setKeywordHits(generateKeywordHits(response));		
 		
 		return result;
 	}
@@ -125,7 +122,11 @@ public class KeywordSearcher {
 		
 		if(filters.size() > 0){
 			customFilters = String.join(" AND ", filters);
-			query.setFilterQueries(String.format("(%s) AND (%s)", userRightsFilter, customFilters));
+			if(colIds.size() > 0){
+				query.setFilterQueries(String.format("(%s) AND (%s)", userRightsFilter, customFilters));
+			}else{
+				query.setFilterQueries(customFilters);
+			}			
 		}else{
 			query.setFilterQueries(userRightsFilter);
 		}		
