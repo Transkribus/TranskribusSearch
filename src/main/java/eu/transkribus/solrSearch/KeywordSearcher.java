@@ -124,7 +124,7 @@ public class KeywordSearcher {
 		
 		if(filters.size() > 0){
 			customFilters = String.join(" AND ", filters);
-			if(colIds == null){
+			if(userRightsFilter.length() > 0){
 				query.setFilterQueries(String.format("(%s) AND (%s)", userRightsFilter, customFilters));
 			}else{
 				query.setFilterQueries(customFilters);
