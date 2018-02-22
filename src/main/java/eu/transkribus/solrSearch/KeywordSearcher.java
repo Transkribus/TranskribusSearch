@@ -141,10 +141,8 @@ public class KeywordSearcher {
 		String flString = "";
 		flString += String.format(" *,[child parentFilter=type_s:parent childFilter='word:%s AND type_s:child AND probability:[%s TO %s]' ] ", keyword, probLow, probHigh);
 		
-		query.set("sort", sorting);
-		
-		query.set("fl", flString);
-		
+		query.set("sort", sorting);		
+		query.set("fl", flString);		
 		query.setStart(start);
 		query.setRows(rows);
 		
