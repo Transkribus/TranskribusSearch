@@ -2,6 +2,7 @@ package eu.transkribus.solrSearch;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import org.apache.solr.client.solrj.SolrClient;
@@ -82,6 +83,20 @@ public class KeywordSearcher {
 			kwHit.setLineId(solrDoc.getFieldValue("lineId").toString());
 			String word = solrDoc.getChildDocuments().get(0).getFieldValue("word").toString();
 			float probability = (float) solrDoc.getChildDocuments().get(0).getFieldValue("probability");
+			
+			ArrayList<Integer> collIds = new ArrayList<>();
+			Collection<Object> collIdObjects = solrDoc.getFieldValues("collectionId");
+			
+			if(collIdObjects != null && (collIdObjects.size() > 0)) {
+				for(Object o : collIdObjects){
+					collIds.add(Integer.parseInt(o.toString()));
+				}
+				
+			}else{
+				collIds.add(-1);
+			}
+
+			kwHit.setColIds(collIds);
 			
 			ArrayList<String> wordOptions = new ArrayList<String>();
 			for(SolrDocument childDoc : solrDoc.getChildDocuments()){
