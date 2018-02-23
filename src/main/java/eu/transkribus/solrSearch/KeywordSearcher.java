@@ -140,12 +140,16 @@ public class KeywordSearcher {
 		if(filters.size() > 0){
 			customFilters = String.join(" AND ", filters);
 			if(userRightsFilter.length() > 0){
-				query.setFilterQueries(String.format("(%s) AND (%s)", userRightsFilter, customFilters));
+				String newFilter = String.format("(%s) AND (%s)", userRightsFilter, customFilters) ;
+				query.setFilterQueries(newFilter);
+				LOGGER.debug("filter set to: " + newFilter);
 			}else{
 				query.setFilterQueries(customFilters);
+				LOGGER.debug("filter set to: " + customFilters);
 			}			
 		}else{
 			query.setFilterQueries(userRightsFilter);
+			LOGGER.debug("filter set to: " + userRightsFilter);
 		}		
 		
 		String queryString = "";
