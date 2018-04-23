@@ -137,8 +137,7 @@ public class TrpIndexer {
 		try {
 			response = server.query(query);
 		} catch (SolrServerException | IOException e1) {
-			LOGGER.error("Could not check if document is already indexed.");
-			e1.printStackTrace();
+			LOGGER.error("Could not check if document is already indexed.", e1);
 		}
 		if(response.getResults().getNumFound()>0){
 			return true;
@@ -156,8 +155,7 @@ public class TrpIndexer {
 		try {
 			response = server.query(query);
 		} catch (SolrServerException | IOException e1) {
-			LOGGER.error("Could not check if page is already indexed.");
-			e1.printStackTrace();
+			LOGGER.error("Could not check if page is already indexed.", e1);
 		}
 		if(response.getResults().getNumFound() > 0){
 			return true;
@@ -296,8 +294,7 @@ public class TrpIndexer {
 //			server.commit();
 //			server.optimize();
 		} catch (SolrServerException | IOException e) {
-			LOGGER.error("Could not remove document "+docId+" from index.");
-			e.printStackTrace();
+			LOGGER.error("Could not remove document "+docId+" from index.", e);
 		}
 	}
 	
@@ -321,8 +318,7 @@ public class TrpIndexer {
 //			server.commit();
 //			server.optimize();
 		} catch (SolrServerException | IOException e) {
-			LOGGER.error("Could not remove page "+docId+" from index.");
-			e.printStackTrace();
+			LOGGER.error("Could not remove page "+docId+" from index.", e);
 		}
 	}
 		
@@ -339,8 +335,7 @@ public class TrpIndexer {
 //			server.commit();
 			server.optimize();
 		} catch (SolrServerException | IOException e) {
-			LOGGER.error("Could not delete from index.");
-			e.printStackTrace();
+			LOGGER.error("Could not delete from index.", e);
 		}
 		
 	}

@@ -17,7 +17,9 @@ import eu.transkribus.core.model.beans.searchresult.FulltextSearchResult;
 import eu.transkribus.solrSearch.util.SearchUtils;
 
 public class TrpSearcher {
-
+	
+	private static final Logger logger = LoggerFactory.getLogger(TrpSearcher.class);
+	
 	private final String serverUrl;
 	private static SolrClient server;
 	private static final Logger LOGGER = LoggerFactory.getLogger(TrpSearcher.class);
@@ -80,8 +82,7 @@ public class TrpSearcher {
 		try {
 			result = server.query(query);
 		} catch (SolrServerException | IOException e) {
-
-			e.printStackTrace();
+			logger.warn("Could search in Solr index!", e);
 		}		
 		return SearchUtils.generateSearchResult(result, TYPE);
 	}
