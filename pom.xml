@@ -2,7 +2,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>eu.transkribus</groupId>
   <artifactId>TranskribusSearch</artifactId>
-  <version>0.0.1</version>
+  <version>0.0.2</version>
   <organization>
 		<!-- <name>Sun Microsystems, Inc.</name> -->
 		<name>UIBK</name>
@@ -32,7 +32,8 @@
 		<dependency>
 			<groupId>eu.transkribus</groupId>
 			<artifactId>TranskribusCore</artifactId>
-			<version>0.0.2</version>
+			<version>0.0.5</version>
+			<scope>provided</scope>
 		</dependency>
 		<dependency>
 		  <groupId>org.apache.solr</groupId>
