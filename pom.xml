@@ -1,9 +1,18 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-  <modelVersion>4.0.0</modelVersion>
-  <groupId>eu.transkribus</groupId>
-  <artifactId>TranskribusSearch</artifactId>
-  <version>0.0.2</version>
-  <organization>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>eu.transkribus</groupId>
+	<artifactId>TranskribusSearch</artifactId>
+	<version>0.0.2</version>
+
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<!-- Transkribus components' version numbers -->
+		<core.version>0.0.6-SNAPSHOT</core.version>
+	</properties>
+	
+	<organization>
 		<!-- <name>Sun Microsystems, Inc.</name> -->
 		<name>UIBK</name>
 	</organization>
@@ -17,12 +26,12 @@
 		</repository>
 	</repositories>
 	<distributionManagement>
-	    <repository>
-	        <id>dbis-halvar-artifactory</id>
-	        <name>dbis-halvar-releases</name>
-	        <url>http://dbis-halvar.uibk.ac.at/artifactory/libs-release-local</url>
-	    </repository>
-	    <site>
+		<repository>
+			<id>dbis-halvar-artifactory</id>
+			<name>dbis-halvar-releases</name>
+			<url>http://dbis-halvar.uibk.ac.at/artifactory/libs-release-local</url>
+		</repository>
+		<site>
 			<id>website</id>
 			<name>transkribus.eu</name>
 			<url>scp://read01.uibk.ac.at/var/www/html/TranskribusSearch</url>
@@ -32,18 +41,18 @@
 		<dependency>
 			<groupId>eu.transkribus</groupId>
 			<artifactId>TranskribusCore</artifactId>
-			<version>0.0.5</version>
+			<version>${core.version}</version>
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
-		  <groupId>org.apache.solr</groupId>
-		  <artifactId>solr-solrj</artifactId>
-		  <version>6.1.0</version>
+			<groupId>org.apache.solr</groupId>
+			<artifactId>solr-solrj</artifactId>
+			<version>6.1.0</version>
 		</dependency>
 		<dependency>
-		  <groupId>com.googlecode.json-simple</groupId>
-		  <artifactId>json-simple</artifactId>
-		  <version>1.1.1</version>
+			<groupId>com.googlecode.json-simple</groupId>
+			<artifactId>json-simple</artifactId>
+			<version>1.1.1</version>
 		</dependency>
 	</dependencies>
 	<build>
@@ -64,9 +73,9 @@
 					<additionalparam>-Xdoclint:none</additionalparam>
 					<show>private</show>
 					<nohelp>true</nohelp>
-<!-- 					<failOnError>false</failOnError>				 -->
+					<!-- <failOnError>false</failOnError> -->
 				</configuration>
-			</plugin>	
+			</plugin>
 		</plugins>
 		<pluginManagement>
 			<plugins>
