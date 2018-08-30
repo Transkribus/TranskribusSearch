@@ -16,6 +16,7 @@ import org.slf4j.LoggerFactory;
 
 import eu.transkribus.core.model.beans.enums.SearchType;
 import eu.transkribus.core.model.beans.searchresult.KeywordHit;
+import eu.transkribus.core.model.beans.searchresult.KeywordPageHit;
 import eu.transkribus.core.model.beans.searchresult.KeywordSearchResult;
 
 public class KeywordSearcher {
@@ -44,6 +45,8 @@ public class KeywordSearcher {
 
 		SolrQuery query = buildQuery(keyword, probLow, probHigh, colIds, filters, sorting, fuzzy, start, rows);
 		
+		System.out.println(query.toString());
+		
 		if(server == null) {
 			server = getSolrClient();
 		}		
@@ -68,47 +71,70 @@ public class KeywordSearcher {
 	}
 
 
-	private ArrayList<KeywordHit> generateKeywordHits(QueryResponse response) {
+	private ArrayList<KeywordPageHit> generateKeywordHits(QueryResponse response) {
 	
-		ArrayList<KeywordHit> kwHits = new ArrayList<>();	
+		ArrayList<KeywordPageHit> kwHits = new ArrayList<>();	
 		
 		for(SolrDocument solrDoc: response.getResults()){
-
-			KeywordHit kwHit = new KeywordHit();
-			kwHit.setId(solrDoc.getFieldValue("id").toString());
-			kwHit.setDocTitle(solrDoc.getFieldValue("title").toString());
-			kwHit.setPageUrl(solrDoc.getFieldValue("pageUrl").toString());
-			kwHit.setTextCoords(solrDoc.getFieldValue("textCoords").toString());
-			kwHit.setPageNr((int) solrDoc.getFieldValue("pageNr"));
-			kwHit.setLineId(solrDoc.getFieldValue("lineId").toString());
-			String word = solrDoc.getChildDocuments().get(0).getFieldValue("word").toString();
-			float probability = (float) solrDoc.getChildDocuments().get(0).getFieldValue("probability");
 			
-			ArrayList<Integer> collIds = new ArrayList<>();
-			Collection<Object> collIdObjects = solrDoc.getFieldValues("collectionId");
+			KeywordPageHit kwPageHit = new KeywordPageHit();
 			
-			if(collIdObjects != null && (collIdObjects.size() > 0)) {
-				for(Object o : collIdObjects){
-					collIds.add(Integer.parseInt(o.toString()));
-				}
+			ArrayList<KeywordHit> subPageHits = new ArrayList<KeywordHit>();
+			
+			
+			kwPageHit.setId(solrDoc.getFieldValue("id").toString());
+			kwPageHit.setDocTitle(solrDoc.getFieldValue("title").toString());
+			kwPageHit.setPageUrl(solrDoc.getFieldValue("pageUrl").toString());
+//			kwHit.setTextCoords(solrDoc.getFieldValue("textCoords").toString());
+			kwPageHit.setPageNr((int) solrDoc.getFieldValue("pageNr"));
+			
+			for (SolrDocument childDoc : solrDoc.getChildDocuments()){
+				KeywordHit kwHit = new KeywordHit();
+//				KeywordHit kwHit = new KeywordHit();
+//				kwHit.setId(solrDoc.getFieldValue("id").toString());
+//				kwHit.setDocTitle(solrDoc.getFieldValue("title").toString());
+//				kwHit.setPageUrl(solrDoc.getFieldValue("pageUrl").toString());
+////				kwHit.setTextCoords(solrDoc.getFieldValue("textCoords").toString());
+//				kwHit.setPageNr((int) solrDoc.getFieldValue("pageNr"));
+//				kwHit.setLineId(solrDoc.getFieldValue("lineId").toString());
+				String word = childDoc.getFieldValue("word").toString();
 				
-			}else{
-				collIds.add(-1);
+				float probability = (float) childDoc.getFieldValue("probability");
+				
+				kwHit.setTextCoords(childDoc.getFieldValue("textCoords").toString());
+				
+				kwHit.setWord(word);
+				kwHit.setProbability(probability);
+				subPageHits.add(kwHit);
+				
+//				ArrayList<Integer> collIds = new ArrayList<>();
+//				Collection<Object> collIdObjects = solrDoc.getFieldValues("collectionId");
+//				
+//				if(collIdObjects != null && (collIdObjects.size() > 0)) {
+//					for(Object o : collIdObjects){
+//						collIds.add(Integer.parseInt(o.toString()));
+//					}
+//					
+//				}else{
+//					collIds.add(-1);
+//				}
+//
+//				kwHit.setColIds(collIds);
+//				
+//				ArrayList<String> wordOptions = new ArrayList<String>();
+//				for(SolrDocument childDoc : solrDoc.getChildDocuments()){
+//					String w = childDoc.getFieldValue("word").toString();
+//					String p = childDoc.getFieldValue("probability").toString();
+//					wordOptions.add( w+"::"+p );
+//				}
+//				
+//				kwHit.setWordOptions(wordOptions);
+								
 			}
+			
+			kwPageHit.setKwHits(subPageHits);
+			kwHits.add(kwPageHit);
 
-			kwHit.setColIds(collIds);
-			
-			ArrayList<String> wordOptions = new ArrayList<String>();
-			for(SolrDocument childDoc : solrDoc.getChildDocuments()){
-				String w = childDoc.getFieldValue("word").toString();
-				String p = childDoc.getFieldValue("probability").toString();
-				wordOptions.add( w+"::"+p );
-			}
-			
-			kwHit.setWordOptions(wordOptions);
-			kwHit.setWord(word);
-			kwHit.setProbability(probability);
-			kwHits.add(kwHit);
 		}
 		
 		return kwHits;
