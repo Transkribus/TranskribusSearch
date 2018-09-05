@@ -69,78 +69,149 @@ public class KeywordSearcher {
 		
 		return result;
 	}
-
-
-	private ArrayList<KeywordPageHit> generateKeywordHits(QueryResponse response) {
 	
-		ArrayList<KeywordPageHit> kwHits = new ArrayList<>();	
+	private static ArrayList<Integer> getIntFromCollection(Collection<Object> collObjects){
+		ArrayList<Integer> ints = new ArrayList<>();
+		
+
+		if(collObjects != null && (collObjects.size() > 0)) {
+			for(Object o : collObjects){
+				ints.add(Integer.parseInt(o.toString()));
+			}
+			
+		}else{
+			ints.add(-1);
+		}
+		
+		return ints;
+		
+	}
+	
+
+
+	private ArrayList<KeywordHit> generateKeywordHits(QueryResponse response) {	
+		ArrayList<KeywordHit> kwHits = new ArrayList<>();
 		
 		for(SolrDocument solrDoc: response.getResults()){
 			
-			KeywordPageHit kwPageHit = new KeywordPageHit();
+			KeywordHit kwHit = new KeywordHit();
 			
-			ArrayList<KeywordHit> subPageHits = new ArrayList<KeywordHit>();
-			
-			
-			kwPageHit.setId(solrDoc.getFieldValue("id").toString());
-			kwPageHit.setDocTitle(solrDoc.getFieldValue("title").toString());
-			kwPageHit.setPageUrl(solrDoc.getFieldValue("pageUrl").toString());
-//			kwHit.setTextCoords(solrDoc.getFieldValue("textCoords").toString());
-			kwPageHit.setPageNr((int) solrDoc.getFieldValue("pageNr"));
-			
-			for (SolrDocument childDoc : solrDoc.getChildDocuments()){
-				KeywordHit kwHit = new KeywordHit();
-//				KeywordHit kwHit = new KeywordHit();
-//				kwHit.setId(solrDoc.getFieldValue("id").toString());
-//				kwHit.setDocTitle(solrDoc.getFieldValue("title").toString());
-//				kwHit.setPageUrl(solrDoc.getFieldValue("pageUrl").toString());
-////				kwHit.setTextCoords(solrDoc.getFieldValue("textCoords").toString());
-//				kwHit.setPageNr((int) solrDoc.getFieldValue("pageNr"));
-//				kwHit.setLineId(solrDoc.getFieldValue("lineId").toString());
-				String word = childDoc.getFieldValue("word").toString();
-				
-				float probability = (float) childDoc.getFieldValue("probability");
-				
-				kwHit.setTextCoords(childDoc.getFieldValue("textCoords").toString());
-				
-				kwHit.setWord(word);
-				kwHit.setProbability(probability);
-				subPageHits.add(kwHit);
-				
-//				ArrayList<Integer> collIds = new ArrayList<>();
-//				Collection<Object> collIdObjects = solrDoc.getFieldValues("collectionId");
-//				
-//				if(collIdObjects != null && (collIdObjects.size() > 0)) {
-//					for(Object o : collIdObjects){
-//						collIds.add(Integer.parseInt(o.toString()));
-//					}
-//					
-//				}else{
-//					collIds.add(-1);
-//				}
-//
-//				kwHit.setColIds(collIds);
-//				
-//				ArrayList<String> wordOptions = new ArrayList<String>();
-//				for(SolrDocument childDoc : solrDoc.getChildDocuments()){
-//					String w = childDoc.getFieldValue("word").toString();
-//					String p = childDoc.getFieldValue("probability").toString();
-//					wordOptions.add( w+"::"+p );
-//				}
-//				
-//				kwHit.setWordOptions(wordOptions);
-								
+			String solrId = solrDoc.getFieldValue("id").toString();
+			String[] subIds = solrId.split("_");
+			if (subIds.length < 3){
+				continue;
 			}
 			
-			kwPageHit.setKwHits(subPageHits);
-			kwHits.add(kwPageHit);
-
-		}
+			int docId = -1;
+			int pageNr = -1;
+			try{
+				docId = Integer.parseInt(subIds[0]);
+				pageNr = Integer.parseInt(subIds[1]);
+			}catch (NumberFormatException e){
+				e.printStackTrace();
+			}
+						
+//			Get field values from solr search response document
+			String docTitle = solrDoc.getFieldValue("title").toString();
+			String imgKey = solrDoc.getFieldValue("ik").toString();
+			String pageUrl = "https://files-test.transkribus.eu//Get?id=" + imgKey + "&fileType=view";	
+			String word = solrDoc.getFieldValue("tx").toString();
+			float probability = (float) solrDoc.getFieldValue("rp");
+			
+			ArrayList<Integer> position = getIntFromCollection(solrDoc.getFieldValues("ps"));
+			ArrayList<Integer> size = getIntFromCollection(solrDoc.getFieldValues("sz"));
+			
+			kwHit.setWord(word);
+			kwHit.setId(solrId);
+			kwHit.setDocId(docId);
+			kwHit.setPageNr(pageNr);
+			kwHit.setDocTitle(docTitle);
+			kwHit.setImgKey(imgKey);					
+			kwHit.setPageUrl(pageUrl);		
+			kwHit.setPos(position);
+			kwHit.setSize(size);
+			kwHit.setProbability(probability);
+			
+			kwHits.add(kwHit);
+			
+		}		
+		
 		
 		return kwHits;
 	}
+	
+	
 
-
+//	private ArrayList<KeywordPageHit> generateKeywordHits(QueryResponse response) {
+//	
+//		ArrayList<KeywordPageHit> kwHits = new ArrayList<>();	
+//		
+//		for(SolrDocument solrDoc: response.getResults()){
+//			
+//			KeywordPageHit kwPageHit = new KeywordPageHit();
+//			
+//			ArrayList<KeywordHit> subPageHits = new ArrayList<KeywordHit>();
+//			
+//			
+//			kwPageHit.setId(solrDoc.getFieldValue("id").toString());
+//			kwPageHit.setDocTitle(solrDoc.getFieldValue("title").toString());
+//			kwPageHit.setPageUrl(solrDoc.getFieldValue("pageUrl").toString());
+////			kwHit.setTextCoords(solrDoc.getFieldValue("textCoords").toString());
+//			kwPageHit.setPageNr((int) solrDoc.getFieldValue("pageNr"));
+//			
+//			for (SolrDocument childDoc : solrDoc.getChildDocuments()){
+//				KeywordHit kwHit = new KeywordHit();
+////				KeywordHit kwHit = new KeywordHit();
+////				kwHit.setId(solrDoc.getFieldValue("id").toString());
+////				kwHit.setDocTitle(solrDoc.getFieldValue("title").toString());
+////				kwHit.setPageUrl(solrDoc.getFieldValue("pageUrl").toString());
+//////				kwHit.setTextCoords(solrDoc.getFieldValue("textCoords").toString());
+////				kwHit.setPageNr((int) solrDoc.getFieldValue("pageNr"));
+////				kwHit.setLineId(solrDoc.getFieldValue("lineId").toString());
+//				String word = childDoc.getFieldValue("word").toString();
+//				
+//				float probability = (float) childDoc.getFieldValue("probability");
+//				
+//				kwHit.setTextCoords(childDoc.getFieldValue("textCoords").toString());
+//				
+//				kwHit.setWord(word);
+//				kwHit.setProbability(probability);
+//				subPageHits.add(kwHit);
+//				
+////				ArrayList<Integer> collIds = new ArrayList<>();
+////				Collection<Object> collIdObjects = solrDoc.getFieldValues("collectionId");
+////				
+////				if(collIdObjects != null && (collIdObjects.size() > 0)) {
+////					for(Object o : collIdObjects){
+////						collIds.add(Integer.parseInt(o.toString()));
+////					}
+////					
+////				}else{
+////					collIds.add(-1);
+////				}
+////
+////				kwHit.setColIds(collIds);
+////				
+////				ArrayList<String> wordOptions = new ArrayList<String>();
+////				for(SolrDocument childDoc : solrDoc.getChildDocuments()){
+////					String w = childDoc.getFieldValue("word").toString();
+////					String p = childDoc.getFieldValue("probability").toString();
+////					wordOptions.add( w+"::"+p );
+////				}
+////				
+////				kwHit.setWordOptions(wordOptions);
+//								
+//			}
+//			
+//			kwPageHit.setKwHits(subPageHits);
+//			kwHits.add(kwPageHit);
+//
+//		}
+//		
+//		return kwHits;
+//	}
+	
+	
 	private SolrQuery buildQuery(String keyword, float probLow, float probHigh, List<Integer> colIds,
 			List<String> filters, String sorting, int fuzzy, int start, int rows) {		
 		
@@ -152,7 +223,7 @@ public class KeywordSearcher {
 			userRightsFilter = "";
 		} else {
 			for (int i : colIds) {
-				userRightsFilter += "collectionId:" + i + " ";
+				userRightsFilter += "cId:" + i + " ";
 				counter++;
 				if (counter < colIds.size())
 					userRightsFilter += "OR ";
@@ -179,21 +250,76 @@ public class KeywordSearcher {
 		}		
 		
 		String queryString = "";
-		queryString += "{!parent which=type_s:parent}";
-		queryString += String.format("(word:%s AND probability:[%s TO %s])", keyword, probLow, probHigh);		
+//		queryString += "{!parent which=type_s:parent}";
+		queryString += String.format("(tx:%s AND rp:[%s TO %s])", keyword, probLow, probHigh);		
 		query.set("q", queryString);	
 		
-		String flString = "";
-		flString += String.format(" *,[child parentFilter=type_s:parent childFilter='word:%s AND type_s:child AND probability:[%s TO %s]' ] ", keyword, probLow, probHigh);
+//		String flString = "";
+//		flString += String.format(" *,[child parentFilter=type_s:parent childFilter='word:%s AND type_s:child AND probability:[%s TO %s]' ] ", keyword, probLow, probHigh);
 		
 		query.set("sort", sorting);		
-		query.set("fl", flString);		
+//		query.set("fl", flString);		
 		query.setStart(start);
 		query.setRows(rows);
 		
 		return query;
 		
 	}
+
+
+//	private SolrQuery buildQuery(String keyword, float probLow, float probHigh, List<Integer> colIds,
+//			List<String> filters, String sorting, int fuzzy, int start, int rows) {		
+//		
+//		SolrQuery query = new SolrQuery();
+//		
+//		String userRightsFilter = "";
+//		int counter = 0;
+//		if (colIds == null) {
+//			userRightsFilter = "";
+//		} else {
+//			for (int i : colIds) {
+//				userRightsFilter += "collectionId:" + i + " ";
+//				counter++;
+//				if (counter < colIds.size())
+//					userRightsFilter += "OR ";
+//			}
+//		}
+//		
+//		String customFilters = "";
+//		
+//		if(filters == null) filters = new ArrayList<String>();
+//		
+//		if(filters.size() > 0){
+//			customFilters = String.join(" AND ", filters);
+//			if(userRightsFilter.length() > 0){
+//				String newFilter = String.format("(%s) AND (%s)", userRightsFilter, customFilters) ;
+//				query.setFilterQueries(newFilter);
+//				LOGGER.debug("filter set to: " + newFilter);
+//			}else{
+//				query.setFilterQueries(customFilters);
+//				LOGGER.debug("filter set to: " + customFilters);
+//			}			
+//		}else{
+//			query.setFilterQueries(userRightsFilter);
+//			LOGGER.debug("filter set to: " + userRightsFilter);
+//		}		
+//		
+//		String queryString = "";
+//		queryString += "{!parent which=type_s:parent}";
+//		queryString += String.format("(word:%s AND probability:[%s TO %s])", keyword, probLow, probHigh);		
+//		query.set("q", queryString);	
+//		
+//		String flString = "";
+//		flString += String.format(" *,[child parentFilter=type_s:parent childFilter='word:%s AND type_s:child AND probability:[%s TO %s]' ] ", keyword, probLow, probHigh);
+//		
+//		query.set("sort", sorting);		
+//		query.set("fl", flString);		
+//		query.setStart(start);
+//		query.setRows(rows);
+//		
+//		return query;
+//		
+//	}
 	
 	
 	
