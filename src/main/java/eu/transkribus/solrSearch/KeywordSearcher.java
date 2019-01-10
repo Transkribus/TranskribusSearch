@@ -114,7 +114,8 @@ public class KeywordSearcher {
 //			Get field values from solr search response document
 			String docTitle = solrDoc.getFieldValue("title").toString();
 			String imgKey = solrDoc.getFieldValue("ik").toString();
-			String pageUrl = "https://files-test.transkribus.eu//Get?id=" + imgKey + "&fileType=view";	
+//			String pageUrl = "https://files-test.transkribus.eu//Get?id=" + imgKey + "&fileType=view";	
+			String pageUrl = "https:/files-test.transkribus.eu/Get?id=" + imgKey + "&fileType=view";	
 			String word = solrDoc.getFieldValue("tx").toString();
 			float probability = (float) solrDoc.getFieldValue("rp");
 			
@@ -131,6 +132,7 @@ public class KeywordSearcher {
 			kwHit.setPos(position);
 			kwHit.setSize(size);
 			kwHit.setProbability(probability);
+			
 			
 			kwHits.add(kwHit);
 			
