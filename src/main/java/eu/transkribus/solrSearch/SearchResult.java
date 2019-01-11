@@ -9,6 +9,7 @@ import org.apache.solr.client.solrj.response.FacetField.Count;
 import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.common.SolrDocument;
 
+
 public class SearchResult {
 	private Map<String,ArrayList<String>> wordHighlights = new HashMap<String,ArrayList<String>>();
 	private Map<String,ArrayList<String>> lineHighlights = new HashMap<String,ArrayList<String>>();

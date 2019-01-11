@@ -108,6 +108,9 @@ public class TrpIndexer {
 		}
 	}	
 	
+	/**
+	 * Commit any staged pages to the SOLR index.
+	 */
 	public void commitToIndex() {
 		try {
 			LOGGER.info("Committing...");
@@ -118,6 +121,10 @@ public class TrpIndexer {
 		}
 	}
 	
+	
+	/**
+	 * Calls SOLR API to optimize the index.
+	 */
 	public void optimizeIndex(){
 		LOGGER.debug("Optimizing index...");
 		try {
@@ -128,7 +135,11 @@ public class TrpIndexer {
 		}
 	}
 	
-	//Check if document is indexed
+	/**
+	 * Checks if a document is indexed by searching the index for entries with the same document id
+	 * @param doc TrpDoc object
+	 * @return true if index contains any pages belonging to document
+	 */
 	private boolean isIndexed(TrpDoc doc){
 
 		SolrQuery query = new SolrQuery();
@@ -147,7 +158,11 @@ public class TrpIndexer {
 		}
 	}
 	
-	//Check if page is indexed
+	/**
+	 * Checks if a page is already indexed
+	 * @param page TrpPage object
+	 * @return true if page is indexed
+	 */
 	private boolean isIndexed(TrpPage page){
 		SolrQuery query = new SolrQuery();
 		query.add("q", "id:"+page.getDocId()+"_"+page.getPageNr());
@@ -237,7 +252,12 @@ public class TrpIndexer {
 	}
 	*/
 	
-	//Update single page index
+	/**
+	 * Commits a single page to the SOLR index
+	 * @param p TrpPage Object
+	 * @param trpDocMd
+	 * @return
+	 */
 	public boolean updatePageIndex(TrpPage p, TrpDocMetadata trpDocMd){
 		//set success to true as default
 		boolean success = true;

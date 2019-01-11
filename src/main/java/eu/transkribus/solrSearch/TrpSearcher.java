@@ -23,6 +23,8 @@ public class TrpSearcher {
 	private final String serverUrl;
 	private static SolrClient server;
 	private static final Logger LOGGER = LoggerFactory.getLogger(TrpSearcher.class);
+	
+	// Disallowed symbols in search keyword - Maybe put this somewhere else
 	private static final String BAD_SYMBOLS = "{,},(,[,+,-,:,=,],),#";
 
 	// public final static String WORDS = "Words";
@@ -86,6 +88,18 @@ public class TrpSearcher {
 		}		
 		return SearchUtils.generateSearchResult(result, TYPE);
 	}
+	
+	
+	/**
+	 * Method to build SOLR syntax queries
+	 * @param searchText
+	 * @param TYPE
+	 * @param colIds
+	 * @param filters
+	 * @param start
+	 * @param rows
+	 * @return SolrQuery object for SOLR API
+	 */
 
 	public SolrQuery buildQuery(String searchText, SearchType TYPE, List<Integer> colIds,
 			List<String> filters, int start, int rows) {
@@ -179,7 +193,10 @@ public class TrpSearcher {
 		return query;
 	}
 
-	// Set connection to solr
+	/**
+	 * Sets up SOLR client
+	 * @return SolrClient SOLR API object
+	 */
 	private SolrClient getSolrClient() {
 
 		// SolrClient solr = new ConcurrentUpdateSolrClient(serverUrl, 20, 3);
