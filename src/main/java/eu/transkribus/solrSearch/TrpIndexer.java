@@ -140,9 +140,12 @@ public class TrpIndexer {
 	 * @param doc TrpDoc object
 	 * @return true if index contains any pages belonging to document
 	 */
+	@Deprecated
 	private boolean isIndexed(TrpDoc doc){
 
 		SolrQuery query = new SolrQuery();
+		
+		// "*_md" document no longer stored extra
 		query.add("q", "id:"+doc.getId()+"_md");
 		QueryResponse response = null;
 		try {
@@ -163,9 +166,9 @@ public class TrpIndexer {
 	 * @param page TrpPage object
 	 * @return true if page is indexed
 	 */
-	private boolean isIndexed(TrpPage page){
+	public boolean isIndexed(TrpPage page){
 		SolrQuery query = new SolrQuery();
-		query.add("q", "id:"+page.getDocId()+"_"+page.getPageNr());
+		query.add("q", "docId:"+page.getDocId()+" AND pageNr:"+page.getPageNr());
 		QueryResponse response = null;
 		try {
 			response = server.query(query);
@@ -308,7 +311,7 @@ public class TrpIndexer {
 	 * @param docId Id of document to be deleted
 	 */
 	public void removeIndex(int docId){
-		String queryString = "id:"+docId+"*";
+		String queryString = "docId:"+docId;
 		try {
 			server.deleteByQuery(queryString);
 //			server.commit();
@@ -332,7 +335,7 @@ public class TrpIndexer {
 	 * @param pageNr Page number of page to be deleted
 	 */
 	public void removeIndex(int docId, int pageNr){
-		String queryString = "id:"+docId+"_"+pageNr+"*";
+		String queryString = "docId:"+docId+" AND pageNr:"+pageNr;
 		try {
 			server.deleteByQuery(queryString);
 //			server.commit();
