@@ -141,7 +141,7 @@ public class TrpIndexer {
 	 * @return true if index contains any pages belonging to document
 	 */
 	@Deprecated
-	private boolean isIndexed(TrpDoc doc){
+	public boolean isIndexed(TrpDoc doc){
 
 		SolrQuery query = new SolrQuery();
 		
