@@ -4,12 +4,12 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>eu.transkribus</groupId>
 	<artifactId>TranskribusSearch</artifactId>
-	<version>0.0.4</version>
+	<version>0.0.5</version>
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<!-- Transkribus components' version numbers -->
-		<core.version>0.1.5</core.version>
+		<core.version>0.2.0</core.version>
 	</properties>
 	
 	<organization>
