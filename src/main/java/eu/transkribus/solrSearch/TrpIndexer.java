@@ -500,6 +500,7 @@ vate SolrInputDocument createIndexDocument(TrpDocMetadata md){
 				doc.addField(SearchField.Uploader.getFieldName(), p.getCurrentTranscript().getUserName());
 			doc.addField(SearchField.UploadTime.getFieldName(), p.getCurrentTranscript().getTime());
 			doc.addField(SearchField.PageUrl.getFieldName(), p.getUrl().toString());
+			doc.addField(SearchField.PageTranscript.getFieldName(), p.getCurrentTranscript().getKey());
 						
 			List<TrpCollection> colls = md.getColList();
 			ArrayList<Integer> colIds = new ArrayList<Integer>();

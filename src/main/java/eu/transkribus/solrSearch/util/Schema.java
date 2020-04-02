@@ -49,6 +49,7 @@ public class Schema {
 	public static final String TEXTLINE = "textLine";
 	public static final String PAGEURL = "pageUrl";
 	public static final String PAGETHUMBURL = "pageThumbUrl";
+	public static final String XMLKEY = "xmlKey";
 	
 	
 	public static final SearchField[] catchAll = {
@@ -88,7 +89,8 @@ public class Schema {
 		TextRegion(TEXTREGION,"TextRegion", FieldType.STRING),
 		TextLine(TEXTLINE, "TextLine", FieldType.STRING),
 		PageUrl(PAGEURL, "PageUrl", FieldType.STRING),
-		PageThumbUrl(PAGETHUMBURL, "PageThumbUrl", FieldType.STRING);
+		PageThumbUrl(PAGETHUMBURL, "PageThumbUrl", FieldType.STRING),
+		PageTranscript(XMLKEY, "Transcript key", FieldType.STRING);
 		
 		private final String fieldName;
 		private final String label;
