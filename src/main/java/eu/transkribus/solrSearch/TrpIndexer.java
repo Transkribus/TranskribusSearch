@@ -84,12 +84,6 @@ public class TrpIndexer {
 	 */
 	public void indexDoc(TrpDoc doc, boolean doOptimize){
 		
-		
-//		if(isIndexed(doc)){
-//			removeIndex(doc);               //probably no longer necessary
-//		}
-		
-		//indexDocMd(doc.getMd());
 		for(TrpPage p: doc.getPages()){
 			
 			if(!indexPage(p, doc.getMd())){
