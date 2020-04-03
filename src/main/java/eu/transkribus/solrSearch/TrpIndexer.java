@@ -9,8 +9,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.xml.bind.JAXBException;
-
 import org.apache.solr.client.solrj.SolrClient;
 import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.SolrServerException;
@@ -474,7 +472,7 @@ vate SolrInputDocument createIndexDocument(TrpDocMetadata md){
 	*/
 	
 	
-	private SolrInputDocument createIndexDocument(TrpPage p, TrpDocMetadata md) throws JAXBException{
+	private SolrInputDocument createIndexDocument(TrpPage p, TrpDocMetadata md) throws IOException {
 		SolrInputDocument doc = new SolrInputDocument();
 		if(p != null){
 			
@@ -506,13 +504,7 @@ vate SolrInputDocument createIndexDocument(TrpDocMetadata md){
 			doc.addField(SearchField.ColId.getFieldName(), colIds);	
 			doc.addField(SearchField.ColName.getFieldName(), colNames);	
 
-			PcGtsType pc = new PcGtsType();
-			try {
-				pc = PageXmlUtils.unmarshal(p.getCurrentTranscript().getUrl());
-			} catch (Exception e) {
-				LOGGER.error("Faulty XML: Doc "+p.getDocId() +" page "+p.getPageNr());
-				throw e;
-			}
+			PcGtsType pc = loadPcGtsType(p.getCurrentTranscript());
 			
 			String fullTextFromWords ="";
 			TrpPageType pt = (TrpPageType)pc.getPage();
@@ -569,8 +561,16 @@ vate SolrInputDocument createIndexDocument(TrpDocMetadata md){
 		
 		return doc;
 	}
-	
-	
+
+	protected PcGtsType loadPcGtsType(TrpTranscriptMetadata tmd) throws IOException {
+		try {
+			return PageXmlUtils.unmarshal(tmd.getUrl());
+		} catch (Exception e) {
+			final String errorMsg = "Faulty XML: pageId " + tmd.getPageId() + " | tsId = " + tmd.getTsId();
+			LOGGER.error(errorMsg, e);
+			throw new IOException(errorMsg, e);
+		}
+	}
 	
 	/**
 	 * Returns a list of TrpWords contained in page transcript.<br>
