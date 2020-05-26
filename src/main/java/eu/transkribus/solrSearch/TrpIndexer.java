@@ -88,7 +88,7 @@ public class TrpIndexer {
 				LOGGER.error("Could not add page " + p.getPageNr() + " | doc = " + p.getDocId());
 				continue;
 			} else {
-				LOGGER.info("Added page " + p.getPageNr() + " | doc = " + p.getDocId());
+				LOGGER.info("Added page " + p.getPageNr() + "/" + doc.getNPages() + " | doc = " + p.getDocId());
 			}
 //			if(p.getPageNr() % 50 == 0) {
 //				commitToIndex();
