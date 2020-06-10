@@ -58,7 +58,7 @@ public class TrpIndexer {
 		//serverUrl = solrConstants.getString("solrUrl"); //Get server url from properties file
 		this.serverUrl = serverUrl;
 		server = this.getSolrClient();
-		LOGGER.info("Instance of Indexer was created.");
+		LOGGER.debug("Instance of Indexer was created.");
 		
 	}
 	

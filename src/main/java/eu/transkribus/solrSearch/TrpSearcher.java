@@ -39,7 +39,7 @@ public class TrpSearcher {
 		// properties file
 		this.serverUrl = serverUrl;
 		server = getSolrClient();
-		LOGGER.info("Instance of TrpSearcher was created.");
+		LOGGER.debug("Instance of TrpSearcher was created.");
 
 	}
 

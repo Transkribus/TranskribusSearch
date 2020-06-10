@@ -33,7 +33,7 @@ public class KeywordSearcher {
 		// properties file
 		this.serverUrl = serverUrl;
 		server = getSolrClient();
-		LOGGER.info("Instance of KeywordSearcher was created.");
+		LOGGER.debug("Instance of KeywordSearcher was created.");
 
 	}
 	
