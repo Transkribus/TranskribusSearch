@@ -115,7 +115,7 @@ public class TrpIndexer {
 	
 	
 	/**
-	 * Calls SOLR API to optimize the index.
+	 * Calls SOLR server API to optimize the index. May take a long time if index is large.
 	 */
 	public void optimizeIndex(){
 		LOGGER.debug("Optimizing index...");
@@ -315,6 +315,7 @@ public class TrpIndexer {
 	
 	/**
 	 * Delete single page from index
+	 * @deprecated
 	 * @param page TrpPage to be deleted
 	 */
 	public void removeIndex(TrpPage page){
@@ -323,6 +324,7 @@ public class TrpIndexer {
 	
 	/**
 	 * Delete single page from index
+	 * @deprecated
 	 * @param docId Id of document containing page
 	 * @param pageNr Page number of page to be deleted
 	 */
@@ -333,8 +335,19 @@ public class TrpIndexer {
 //			server.commit();
 //			server.optimize();
 		} catch (SolrServerException | IOException e) {
-			LOGGER.error("Could not remove page "+docId+" from index.", e);
+			LOGGER.error("Could not remove page nr" + pageNr + " doc " + docId + " from index.", e);
 		}
+	}
+
+	public void removePage(TrpPage page){
+
+			String deletion_id = page.getDocId() + "_" + page.getPageNr();
+			try {
+				server.deleteById(deletion_id);
+
+			} catch (SolrServerException | IOException e) {
+				LOGGER.error("Could not remove page " + page.getPageNr() + " doc " + page.getDocId() + " from index.", e);
+			}
 	}
 		
 	
