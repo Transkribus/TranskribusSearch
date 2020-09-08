@@ -4,12 +4,12 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>eu.transkribus</groupId>
 	<artifactId>TranskribusSearch</artifactId>
-	<version>0.0.5</version>
+	<version>0.0.6</version>
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<!-- Transkribus components' version numbers -->
-		<core.version>0.12.0-SNAPSHOT</core.version>
+		<core.version>0.12.0</core.version>
 	</properties>
 	
 	<organization>
@@ -47,6 +47,8 @@
 			<groupId>org.apache.solr</groupId>
 			<artifactId>solr-solrj</artifactId>
 			<version>6.1.0</version>
+			<!-- Current Solr installation is 6.6.2. Do we need to update? -->
+<!-- 			<version>6.6.2</version> -->
 		</dependency>
 		<dependency>
 			<groupId>com.googlecode.json-simple</groupId>
