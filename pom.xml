@@ -9,7 +9,7 @@
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<!-- Transkribus components' version numbers -->
-		<core.version>0.12.0</core.version>
+		<core.version>0.13.0-SNAPSHOT</core.version>
 	</properties>
 	
 	<organization>
